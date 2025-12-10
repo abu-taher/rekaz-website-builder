@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
 import { SECTION_LIBRARY } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
+import { SectionRenderer } from './SectionRenderer';
 
 export function Editor() {
   const sections = useLayoutStore((state) => state.sections);
@@ -42,14 +42,10 @@ export function Editor() {
             {sections.map((section) => (
               <div
                 key={section.id}
-                className="border border-slate-700 rounded-lg p-4 bg-slate-900/60"
+                className="group border border-slate-700 rounded-xl p-4 bg-slate-900/60 hover:border-sky-500/70 transition"
               >
-                <div className="text-xs uppercase tracking-wide text-slate-400 mb-2">
-                  {section.type}
-                </div>
-                <pre className="text-xs text-slate-300 overflow-x-auto">
-                  {JSON.stringify(section.props, null, 2)}
-                </pre>
+                {/* Later we’ll add drag handle + delete + select here */}
+                <SectionRenderer section={section} />
               </div>
             ))}
           </div>
