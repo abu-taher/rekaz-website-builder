@@ -4,15 +4,35 @@ import { SECTION_LIBRARY } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
 import { SectionRenderer } from './SectionRenderer';
 import { PropertyPanel } from './PropertyPanel';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { SectionSortableItem } from './SectionSortableItem';
 
 export function Editor() {
   const sections = useLayoutStore((state) => state.sections);
   const selectedSectionId = useLayoutStore((state) => state.selectedSectionId);
-  const addSection = useLayoutStore((state) => state.addSection);
   const selectSection = useLayoutStore((state) => state.selectSection);
+  const addSection = useLayoutStore((state) => state.addSection);
+  const reorderSections = useLayoutStore((state) => state.reorderSections);
+
   const selectedSection = sections.find(
     (section) => section.id === selectedSectionId
   );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = sections.findIndex((s) => s.id === active.id);
+    const newIndex = sections.findIndex((s) => s.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    reorderSections(oldIndex, newIndex);
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)] gap-4">
@@ -49,37 +69,21 @@ export function Editor() {
             No sections yet. Add one from the library.
           </div>
         ) : (
-          <div className="space-y-4">
-            {sections.map((section) => {
-              const isSelected = section.id === selectedSectionId;
-
-              return (
-                <button
-                  key={section.id}
-                  type="button"
-                  onClick={() => selectSection(section.id)}
-                  className={[
-                    'w-full text-left border rounded-xl p-4 bg-slate-900/60 transition group',
-                    isSelected
-                      ? 'border-sky-500/80 shadow-[0_0_0_1px_rgba(56,189,248,0.4)]'
-                      : 'border-slate-700 hover:border-sky-500/60',
-                  ].join(' ')}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] uppercase tracking-wide text-slate-400">
-                      {section.type}
-                    </span>
-                    {isSelected && (
-                      <span className="text-[10px] px-2 py-[2px] rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/40">
-                        Selected
-                      </span>
-                    )}
-                  </div>
-                  <SectionRenderer section={section} />
-                </button>
-              );
-            })}
-          </div>
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={sections.map((s) => s.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {sections.map((section) => (
+                  <SectionSortableItem key={section.id} section={section} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </main>
     </div>
