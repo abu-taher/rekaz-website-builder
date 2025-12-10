@@ -104,6 +104,43 @@ export function Editor() {
     reset();
   };
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const raw = window.localStorage.getItem('rekaz-layout');
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+
+      const validSections = parsed.filter(
+        (item: any) =>
+          item &&
+          typeof item.id === 'string' &&
+          typeof item.type === 'string' &&
+          'props' in item
+      );
+
+      if (validSections.length > 0) {
+        replaceAll(validSections);
+      }
+    } catch (error) {
+      console.error('Failed to load layout from localStorage:', error);
+    }
+  }, [replaceAll]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const data = JSON.stringify(sections);
+      window.localStorage.setItem('rekaz-layout', data);
+    } catch (error) {
+      console.error('Failed to save layout to localStorage:', error);
+    }
+  }, [sections]);
+
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] gap-4">
       {/* Toolbar */}
