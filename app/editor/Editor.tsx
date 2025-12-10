@@ -115,6 +115,7 @@ export function Editor() {
       if (!Array.isArray(parsed)) return;
 
       const validSections = parsed.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (item: any) =>
           item &&
           typeof item.id === 'string' &&
