@@ -189,7 +189,7 @@ export function Editor() {
       {/* Main content: sidebar + preview */}
       <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0">
         {/* Sidebar */}
-        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto max-h-full">
+        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto max-h-full min-h-[50vh]">
           <h2 className="text-lg font-semibold mb-3">Section Library</h2>
 
           <div className="space-y-2 mb-4">
@@ -213,7 +213,7 @@ export function Editor() {
         </aside>
 
         {/* Preview */}
-        <main className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-y-auto max-h-full">
+        <main className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-y-auto max-h-full min-h-[50vh]">
           <h2 className="text-lg font-semibold mb-3">Preview</h2>
 
           {sections.length === 0 ? (
