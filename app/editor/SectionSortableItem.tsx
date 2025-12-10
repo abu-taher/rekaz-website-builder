@@ -44,8 +44,8 @@ export const SectionSortableItem = memo(function SectionSortableItem({
       className={[
         'w-full text-left border rounded-xl p-4 bg-slate-900/60 transition group',
         isSelected
-          ? 'border-sky-500/80 shadow-[0_0_0_1px_rgba(56,189,248,0.4)]'
-          : 'border-slate-700 hover:border-sky-500/60',
+          ? 'border-sky-500 shadow-[0_0_15px_rgba(56,189,248,0.15)]'
+          : 'border-slate-700 hover:border-sky-400 hover:shadow-[0_0_8px_rgba(56,189,248,0.08)]',
       ].join(' ')}
     >
       <div className="flex items-center justify-between mb-2 gap-2">
