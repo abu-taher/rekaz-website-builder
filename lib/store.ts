@@ -61,7 +61,11 @@ export const useLayoutStore = create<LayoutState>((set) => ({
     set((state) => ({
       sections: moveItem(state.sections, fromIndex, toIndex),
     })),
-  replaceAll: (sections) => set({ sections }),
+  replaceAll: (sections) =>
+    set(() => ({
+      sections,
+      selectedSectionId: sections.length > 0 ? sections[0].id : null,
+    })),
   reset: () => set({ sections: [] }),
   selectSection: (id) => set({ selectedSectionId: id }),
 }));
