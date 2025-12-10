@@ -4,12 +4,14 @@ import { SECTION_LIBRARY, SectionInstance, SectionType } from './sections';
 
 type LayoutState = {
   sections: SectionInstance[];
+  selectedSectionId: string | null;
   addSection: (type: SectionType) => void;
   updateSection: (id: string, patch: Partial<SectionInstance['props']>) => void;
   removeSection: (id: string) => void;
   reorderSections: (fromIndex: number, toIndex: number) => void;
   replaceAll: (sections: SectionInstance[]) => void;
   reset: () => void;
+  selectSection: (id: string | null) => void;
 };
 
 const moveItem = <T>(arr: T[], from: number, to: number): T[] => {
@@ -21,6 +23,7 @@ const moveItem = <T>(arr: T[], from: number, to: number): T[] => {
 
 export const useLayoutStore = create<LayoutState>((set) => ({
   sections: [],
+  selectedSectionId: null,
   addSection: (type) =>
     set((state) => {
       const def = SECTION_LIBRARY.find((d) => d.type === type);
@@ -32,7 +35,10 @@ export const useLayoutStore = create<LayoutState>((set) => ({
         props: def.defaultProps,
       };
 
-      return { sections: [...state.sections, instance] };
+      return {
+        sections: [...state.sections, instance],
+        selectedSectionId: instance.id, // auto-select
+      };
     }),
   updateSection: (id, patch) =>
     set((state) => ({
@@ -50,4 +56,5 @@ export const useLayoutStore = create<LayoutState>((set) => ({
     })),
   replaceAll: (sections) => set({ sections }),
   reset: () => set({ sections: [] }),
+  selectSection: (id) => set({ selectedSectionId: id }),
 }));
