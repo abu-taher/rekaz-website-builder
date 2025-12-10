@@ -16,6 +16,7 @@ export const SectionSortableItem = memo(function SectionSortableItem({
 }: Props) {
   const selectedSectionId = useLayoutStore((s) => s.selectedSectionId);
   const selectSection = useLayoutStore((s) => s.selectSection);
+  const removeSection = useLayoutStore((s) => s.removeSection);
 
   const isSelected = section.id === selectedSectionId;
 
@@ -58,6 +59,17 @@ export const SectionSortableItem = memo(function SectionSortableItem({
               Selected
             </span>
           )}
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              removeSection(section.id);
+            }}
+            className="inline-flex items-center justify-center rounded-md border border-red-500/60 bg-slate-900 px-2 py-1 text-[10px] text-red-300 hover:bg-red-500/10 hover:border-red-400"
+          >
+            Delete
+          </button>
 
           {/* Drag handle */}
           <button
