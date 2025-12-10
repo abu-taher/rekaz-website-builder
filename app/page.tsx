@@ -14,7 +14,9 @@ export default function HomePage() {
       </header>
 
       <main className="p-4">
-        <Editor />
+        <div className="max-w-6xl mx-auto">
+          <Editor />
+        </div>
       </main>
     </div>
   );
