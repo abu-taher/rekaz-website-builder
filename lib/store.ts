@@ -47,9 +47,16 @@ export const useLayoutStore = create<LayoutState>((set) => ({
       ),
     })),
   removeSection: (id) =>
-    set((state) => ({
-      sections: state.sections.filter((s) => s.id !== id),
-    })),
+    set((state) => {
+      const filtered = state.sections.filter((s) => s.id !== id);
+      const selectedSectionId =
+        state.selectedSectionId === id ? null : state.selectedSectionId;
+
+      return {
+        sections: filtered,
+        selectedSectionId,
+      };
+    }),
   reorderSections: (fromIndex, toIndex) =>
     set((state) => ({
       sections: moveItem(state.sections, fromIndex, toIndex),
