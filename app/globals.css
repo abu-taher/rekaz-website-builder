@@ -70,3 +70,81 @@ body {
   outline: 2px solid #F17265;
   outline-offset: 2px;
 }
+
+/* Section animations */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(241, 114, 101, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(241, 114, 101, 0);
+  }
+}
+
+.animate-fade-slide-in {
+  animation: fadeSlideIn 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+.animate-pulse-border {
+  animation: pulse 1.5s ease-in-out;
+}
+
+/* Drag overlay styles */
+.dragging-overlay {
+  box-shadow: 0 10px 40px rgba(241, 114, 101, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+}
+
+/* Button click feedback */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Section library item hover animation */
+.section-library-item {
+  transition: all 0.2s ease;
+}
+
+.section-library-item:hover {
+  transform: translateX(4px);
+}
+
+/* Selection indicator animation */
+@keyframes selectedGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(241, 114, 101, 0.2), 0 4px 16px rgba(241, 114, 101, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(241, 114, 101, 0.15), 0 4px 20px rgba(241, 114, 101, 0.2);
+  }
+}
+
+.selected-section {
+  animation: selectedGlow 2s ease-in-out infinite;
+}
