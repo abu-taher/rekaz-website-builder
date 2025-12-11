@@ -41,7 +41,6 @@ export const SectionSortableItem = memo(function SectionSortableItem({
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition: transition || 'transform 0.2s ease',
-    zIndex: isDragging ? 50 : 'auto',
   };
 
   return (
@@ -58,16 +57,16 @@ export const SectionSortableItem = memo(function SectionSortableItem({
         }
       }}
       className={[
-        'w-full text-left border-2 rounded-xl p-4 bg-white group cursor-pointer',
+        'w-full text-left border-2 rounded-xl p-4 group cursor-pointer',
         'transition-all duration-200 ease-out',
         'animate-fade-slide-in',
         isDragging
-          ? 'dragging-overlay opacity-90 border-[#F17265]'
-          : 'opacity-100',
-        isSelected
+          ? 'opacity-50 border-dashed border-[#F17265] bg-[#FFF5F4]'
+          : 'bg-white opacity-100',
+        isSelected && !isDragging
           ? 'border-[#F17265] selected-section'
-          : 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
-      ].join(' ')}
+          : !isDragging && 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
+      ].filter(Boolean).join(' ')}
     >
       <div className="flex flex-wrap items-center justify-between mb-3 gap-2">
         <div className="flex items-center gap-2">

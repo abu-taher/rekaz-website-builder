@@ -1,14 +1,16 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
-import { SECTION_LIBRARY } from '@/lib/sections';
+import { SECTION_LIBRARY, SectionInstance } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
 import { PropertyPanel } from './PropertyPanel';
 import {
   DndContext,
   closestCenter,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
   TouchSensor,
   MouseSensor,
   useSensor,
@@ -20,6 +22,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SectionSortableItem } from './SectionSortableItem';
+import { SectionRenderer } from './SectionRenderer';
 
 export function Editor() {
   const sections = useLayoutStore((state) => state.sections);
@@ -29,6 +32,7 @@ export function Editor() {
   const reset = useLayoutStore((state) => state.reset);
   const replaceAll = useLayoutStore((state) => state.replaceAll);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [activeSection, setActiveSection] = useState<SectionInstance | null>(null);
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -53,8 +57,16 @@ export function Editor() {
     (section) => section.id === selectedSectionId
   );
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const section = sections.find((s) => s.id === active.id);
+    setActiveSection(section || null);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveSection(null);
+    
     if (!over || active.id === over.id) return;
 
     const oldIndex = sections.findIndex((s) => s.id === active.id);
@@ -278,6 +290,7 @@ export function Editor() {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
@@ -290,6 +303,25 @@ export function Editor() {
                   ))}
                 </div>
               </SortableContext>
+              
+              <DragOverlay dropAnimation={{
+                duration: 200,
+                easing: 'ease-out',
+              }}>
+                {activeSection ? (
+                  <div className="w-full border-2 border-[#F17265] rounded-xl p-4 bg-white shadow-2xl scale-[1.02] ring-2 ring-[#F17265] ring-opacity-30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="inline-flex items-center justify-center rounded-lg border-2 border-[#F17265] bg-white w-8 h-8 text-sm font-bold text-[#F17265]">
+                        ⠿
+                      </span>
+                      <span className="text-xs uppercase tracking-wide font-semibold text-gray-600">
+                        {activeSection.type}
+                      </span>
+                    </div>
+                    <SectionRenderer section={activeSection} />
+                  </div>
+                ) : null}
+              </DragOverlay>
             </DndContext>
           )}
         </main>
