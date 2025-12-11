@@ -4,6 +4,7 @@ export type HeroProps = {
   title: string;
   subtitle?: string;
   buttonLabel?: string;
+  imageUrl?: string;
 };
 
 export type HeaderProps = {
@@ -48,6 +49,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
       title: 'Welcome to your new landing page 👋',
       subtitle: 'Build your website visually with the Rekaz mini builder.',
       buttonLabel: 'Get Started',
+      imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=600&fit=crop',
     } satisfies HeroProps,
   },
   {
