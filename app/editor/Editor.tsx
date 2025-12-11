@@ -5,7 +5,16 @@ import { useRef, useEffect } from 'react';
 import { SECTION_LIBRARY } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
 import { PropertyPanel } from './PropertyPanel';
-import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import {
+  DndContext,
+  closestCenter,
+  DragEndEvent,
+  TouchSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from '@dnd-kit/core';
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -20,6 +29,25 @@ export function Editor() {
   const reset = useLayoutStore((state) => state.reset);
   const replaceAll = useLayoutStore((state) => state.replaceAll);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Configure sensors for both mouse and touch support
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10, // Require 10px movement before drag starts
+    },
+  });
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 150, // Hold for 150ms before drag starts on touch
+      tolerance: 5,
+    },
+  });
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+  const sensors = useSensors(mouseSensor, touchSensor, pointerSensor);
 
   const selectedSection = sections.find(
     (section) => section.id === selectedSectionId
@@ -248,6 +276,7 @@ export function Editor() {
             </div>
           ) : (
             <DndContext
+              sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
             >
