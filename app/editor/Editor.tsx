@@ -97,40 +97,18 @@ export function Editor() {
       const data = JSON.stringify(sections, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const filename = `rekaz-layout-${new Date().toISOString().slice(0, 10)}.json`;
 
-      // Check if Web Share API is available (better for mobile)
-      if (navigator.share && /mobile|android|iphone|ipad/i.test(navigator.userAgent)) {
-        const file = new File([blob], filename, { type: 'application/json' });
-        navigator.share({
-          files: [file],
-          title: 'Rekaz Layout',
-          text: 'My website layout from Rekaz Builder',
-        }).catch(() => {
-          // Fallback to download if share fails
-          downloadFile(url, filename);
-        });
-      } else {
-        downloadFile(url, filename);
-      }
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'rekaz-layout.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Failed to export layout:', error);
     }
-  };
-
-  const downloadFile = (url: string, filename: string) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    
-    // Use setTimeout for better mobile compatibility
-    setTimeout(() => {
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, 100);
   };
 
   const handleImportClick = () => {
@@ -248,48 +226,36 @@ export function Editor() {
             type="button"
             onClick={handleExport}
             aria-label="Export layout as JSON"
-            className="text-sm px-3 py-2 md:px-4 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] active:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 flex items-center gap-1.5"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span className="hidden sm:inline">Export</span>
-            <span className="sm:hidden">Export</span>
+            Export JSON
           </button>
 
           <button
             type="button"
             onClick={handleImportClick}
             aria-label="Import layout from JSON"
-            className="text-sm px-3 py-2 md:px-4 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] active:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 flex items-center gap-1.5"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
-            <span className="hidden sm:inline">Import</span>
-            <span className="sm:hidden">Import</span>
+            Import JSON
           </button>
 
           <button
             type="button"
             onClick={handleClear}
             aria-label="Clear all sections"
-            className="text-sm px-3 py-2 md:px-4 rounded-lg border-2 border-[#F17265] bg-white text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white active:bg-[#E25C4F] transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 flex items-center gap-1.5"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-[#F17265] bg-white text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            <span className="hidden sm:inline">Clear</span>
-            <span className="sm:hidden">Clear</span>
+            Clear
           </button>
 
-          {/* hidden file input for import - accept both MIME type and extension for mobile compatibility */}
+          {/* hidden file input for import */}
           <input
             ref={fileInputRef}
             type="file"
-            accept=".json,application/json,text/plain"
+            accept="application/json"
             onChange={handleFileChange}
-            className="sr-only"
+            className="hidden"
             aria-label="File input for importing JSON"
           />
         </div>
