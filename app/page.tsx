@@ -2,19 +2,19 @@ import { Editor } from './editor/Editor';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#F8F9FB] text-[#030014]">
       {/* Header */}
-      <header className="border-b border-slate-800 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">
+      <header className="border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between bg-white shadow-sm">
+        <h1 className="text-2xl font-bold tracking-tight text-[#030014]">
           Rekaz Mini Website Builder
         </h1>
-        <span className="text-xs text-slate-400">
+        <span className="text-sm text-gray-600 font-medium">
           SSR Friendly • Assignment Demo
         </span>
       </header>
 
-      <main className="p-4">
-        <div className="max-w-6xl mx-auto">
+      <main className="p-6">
+        <div className="max-w-7xl mx-auto">
           <Editor />
         </div>
       </main>
