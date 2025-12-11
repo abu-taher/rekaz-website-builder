@@ -15,30 +15,33 @@ export const SectionRenderer = memo(
       case 'hero': {
         const { title, subtitle, buttonLabel, imageUrl } = props ?? {};
         return (
-          <section className="py-14 md:py-16 text-center bg-gradient-to-b from-[#FFF5F4] to-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
+          <section className="relative py-14 md:py-16 text-center bg-gradient-to-b from-[#FFF5F4] to-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
             {imageUrl && (
-              <div className="mb-6 px-6">
+              <div className="absolute inset-0 overflow-hidden rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={imageUrl}
-                  alt="Hero image"
-                  className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md"
+                  alt=""
+                  className="w-full h-full object-cover opacity-40"
                 />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-white/90" />
               </div>
             )}
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#030014] px-6">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-gray-600 text-sm md:text-base mb-6 max-w-xl mx-auto px-6">
-                {subtitle}
-              </p>
-            )}
-            {buttonLabel && (
-              <button className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#F17265] text-white text-sm font-semibold hover:bg-[#E25C4F] transition-all shadow-md hover:shadow-lg focus:ring-2 focus:ring-[#F17265] focus:ring-offset-2">
-                {buttonLabel}
-              </button>
-            )}
+            <div className="relative">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#030014] px-6">
+                {title}
+              </h2>
+              {subtitle && (
+                <p className="text-gray-600 text-sm md:text-base mb-6 max-w-xl mx-auto px-6">
+                  {subtitle}
+                </p>
+              )}
+              {buttonLabel && (
+                <button className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#F17265] text-white text-sm font-semibold hover:bg-[#E25C4F] transition-all shadow-md hover:shadow-lg focus:ring-2 focus:ring-[#F17265] focus:ring-offset-2">
+                  {buttonLabel}
+                </button>
+              )}
+            </div>
           </section>
         );
       }

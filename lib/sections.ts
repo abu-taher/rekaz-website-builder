@@ -48,10 +48,10 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
     label: 'Hero',
     description: 'Big headline with supporting text and a call-to-action.',
     defaultProps: {
-      title: 'Welcome to your new landing page 👋',
-      subtitle: 'Build your website visually with the Rekaz mini builder.',
-      buttonLabel: 'Get Started',
-      imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=600&fit=crop',
+      title: 'Build Beautiful Websites Visually',
+      subtitle: 'Drag, drop, and customize. Create stunning pages in minutes with our intuitive website builder.',
+      buttonLabel: 'Start Building',
+      imageUrl: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1200&h=600&fit=crop',
     } satisfies HeroProps,
   },
   {

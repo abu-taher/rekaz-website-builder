@@ -73,9 +73,9 @@ function PreviewSection({ section }: { section: SectionInstance }) {
               <img
                 src={imageUrl}
                 alt=""
-                className="w-full h-full object-cover opacity-20"
+                className="w-full h-full object-cover opacity-40"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-white" />
+              <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-white/90" />
             </div>
           )}
           <div className="relative max-w-4xl mx-auto px-6">
