@@ -9,12 +9,10 @@ import { useLayoutStore } from '@/lib/store';
 
 type Props = {
   section: SectionInstance;
-  isOver?: boolean;
 };
 
 export const SectionSortableItem = memo(function SectionSortableItem({
   section,
-  isOver = false,
 }: Props) {
   const selectedSectionId = useLayoutStore((s) => s.selectedSectionId);
   const selectSection = useLayoutStore((s) => s.selectSection);
@@ -63,27 +61,23 @@ export const SectionSortableItem = memo(function SectionSortableItem({
         'transition-all duration-200 ease-out',
         'animate-fade-slide-in',
         isDragging
-          ? 'opacity-50 border-dashed border-[#F17265] bg-[#FFF5F4]'
+          ? 'opacity-40 border-dashed border-[#F17265] bg-[#FFF5F4] scale-[0.98]'
           : 'bg-white opacity-100',
-        isOver && !isDragging
-          ? 'border-[#F17265] border-2 shadow-lg ring-2 ring-[#F17265] ring-opacity-20 scale-[1.01]'
-          : '',
-        isSelected && !isDragging && !isOver
+        isSelected && !isDragging
           ? 'border-[#F17265] selected-section'
-          : !isDragging && !isOver && 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
+          : !isDragging && 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
       ].filter(Boolean).join(' ')}
     >
       <div className="flex flex-wrap items-center justify-between mb-3 gap-2">
         <div className="flex items-center gap-2">
-          {/* Drag handle - first on mobile for easier access */}
+          {/* Drag handle - larger on mobile for easier touch */}
           <button
             type="button"
             onClick={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
             {...listeners}
             {...attributes}
-            className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white w-8 h-8 text-sm font-bold text-gray-600 hover:border-[#F17265] hover:text-[#F17265] cursor-grab active:cursor-grabbing transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 touch-none"
-            aria-label="Drag to reorder section"
+            className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white min-w-[44px] min-h-[44px] w-11 h-11 md:w-8 md:h-8 md:min-w-[32px] md:min-h-[32px] text-base md:text-sm font-bold text-gray-600 hover:border-[#F17265] hover:text-[#F17265] active:border-[#F17265] active:text-[#F17265] active:bg-[#FFF5F4] cursor-grab active:cursor-grabbing transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 touch-none select-none"
+            aria-label="Hold and drag to reorder section"
           >
             ⠿
           </button>

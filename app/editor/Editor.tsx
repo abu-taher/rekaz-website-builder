@@ -8,7 +8,6 @@ import { PropertyPanel } from './PropertyPanel';
 import {
   DndContext,
   closestCenter,
-  DragEndEvent,
   DragStartEvent,
   DragOverEvent,
   DragOverlay,
@@ -34,8 +33,6 @@ export function Editor() {
   const replaceAll = useLayoutStore((state) => state.replaceAll);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [activeSection, setActiveSection] = useState<SectionInstance | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -64,19 +61,13 @@ export function Editor() {
     const { active } = event;
     const section = sections.find((s) => s.id === active.id);
     setActiveSection(section || null);
-    setActiveId(active.id as string);
+    
+    // Prevent body scroll on mobile during drag
+    document.body.classList.add('dragging');
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    const { over } = event;
-    setOverId(over?.id as string | null);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    setActiveSection(null);
-    setActiveId(null);
-    setOverId(null);
     
     if (!over || active.id === over.id) return;
 
@@ -84,8 +75,21 @@ export function Editor() {
     const newIndex = sections.findIndex((s) => s.id === over.id);
 
     if (oldIndex === -1 || newIndex === -1) return;
+    if (oldIndex === newIndex) return;
 
+    // Move sections in real-time during drag
     reorderSections(oldIndex, newIndex);
+  };
+
+  const handleDragEnd = () => {
+    setActiveSection(null);
+    // Re-enable body scroll on mobile
+    document.body.classList.remove('dragging');
+  };
+
+  const handleDragCancel = () => {
+    setActiveSection(null);
+    document.body.classList.remove('dragging');
   };
 
   const handleExport = () => {
@@ -304,51 +308,16 @@ export function Editor() {
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
+              onDragCancel={handleDragCancel}
             >
               <SortableContext
                 items={sections.map((s) => s.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-4">
-                  {sections.map((section) => {
-                    const activeIndex = activeId ? sections.findIndex(s => s.id === activeId) : -1;
-                    const overIndex = overId ? sections.findIndex(s => s.id === overId) : -1;
-                    
-                    // Show drop indicator above this section if:
-                    // - We're dragging (activeId exists)
-                    // - This section is the one being hovered over (overId matches)
-                    // - The dragged item would be placed above this item
-                    const showDropIndicatorAbove = 
-                      activeId && 
-                      overId === section.id && 
-                      activeId !== section.id &&
-                      activeIndex > overIndex;
-                    
-                    // Show drop indicator below this section if:
-                    // - We're dragging (activeId exists)
-                    // - This section is the one being hovered over (overId matches)
-                    // - The dragged item would be placed below this item
-                    const showDropIndicatorBelow = 
-                      activeId && 
-                      overId === section.id && 
-                      activeId !== section.id &&
-                      activeIndex < overIndex;
-
-                    return (
-                      <div key={section.id}>
-                        {showDropIndicatorAbove && (
-                          <div className="h-1 bg-[#F17265] rounded-full mb-4 animate-pulse" />
-                        )}
-                        <SectionSortableItem 
-                          section={section} 
-                          isOver={overId === section.id && activeId !== section.id}
-                        />
-                        {showDropIndicatorBelow && (
-                          <div className="h-1 bg-[#F17265] rounded-full mt-4 animate-pulse" />
-                        )}
-                      </div>
-                    );
-                  })}
+                  {sections.map((section) => (
+                    <SectionSortableItem key={section.id} section={section} />
+                  ))}
                 </div>
               </SortableContext>
               
@@ -357,16 +326,21 @@ export function Editor() {
                 easing: 'ease-out',
               }}>
                 {activeSection ? (
-                  <div className="w-full border-2 border-[#F17265] rounded-xl p-4 bg-white shadow-2xl scale-[1.02] ring-2 ring-[#F17265] ring-opacity-30">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center rounded-lg border-2 border-[#F17265] bg-white w-8 h-8 text-sm font-bold text-[#F17265]">
+                  <div className="w-full border-2 border-[#F17265] rounded-xl p-3 md:p-4 bg-white shadow-2xl scale-[1.02] ring-2 ring-[#F17265] ring-opacity-30 max-w-[calc(100vw-3rem)]">
+                    <div className="flex items-center gap-2 mb-2 md:mb-3">
+                      <span className="inline-flex items-center justify-center rounded-lg border-2 border-[#F17265] bg-[#FFF5F4] w-11 h-11 md:w-8 md:h-8 text-base md:text-sm font-bold text-[#F17265]">
                         ⠿
                       </span>
-                      <span className="text-xs uppercase tracking-wide font-semibold text-gray-600">
+                      <span className="text-xs uppercase tracking-wide font-semibold text-[#F17265]">
                         {activeSection.type}
                       </span>
+                      <span className="text-xs text-gray-500 hidden sm:inline">
+                        (dragging)
+                      </span>
                     </div>
-                    <SectionRenderer section={activeSection} />
+                    <div className="opacity-80">
+                      <SectionRenderer section={activeSection} />
+                    </div>
                   </div>
                 ) : null}
               </DragOverlay>
