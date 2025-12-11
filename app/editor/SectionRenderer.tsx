@@ -13,14 +13,23 @@ export const SectionRenderer = memo(
 
     switch (type) {
       case 'hero': {
-        const { title, subtitle, buttonLabel } = props ?? {};
+        const { title, subtitle, buttonLabel, imageUrl } = props ?? {};
         return (
-          <section className="py-14 md:py-16 text-center bg-gradient-to-b from-[#FFF5F4] to-white rounded-xl shadow-lg border-2 border-gray-200">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#030014]">
+          <section className="py-14 md:py-16 text-center bg-gradient-to-b from-[#FFF5F4] to-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
+            {imageUrl && (
+              <div className="mb-6 px-6">
+                <img
+                  src={imageUrl}
+                  alt="Hero image"
+                  className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md"
+                />
+              </div>
+            )}
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#030014] px-6">
               {title}
             </h2>
             {subtitle && (
-              <p className="text-gray-600 text-sm md:text-base mb-6 max-w-xl mx-auto">
+              <p className="text-gray-600 text-sm md:text-base mb-6 max-w-xl mx-auto px-6">
                 {subtitle}
               </p>
             )}

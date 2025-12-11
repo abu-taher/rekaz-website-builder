@@ -67,6 +67,19 @@ export const PropertyPanel = memo(function PropertyPanel({
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
+
+          <div className="space-y-2">
+            <label htmlFor="hero-image" className="text-sm font-medium text-gray-700 block">Image URL</label>
+            <input
+              id="hero-image"
+              type="url"
+              value={props.imageUrl ?? ''}
+              onChange={handleChange('imageUrl')}
+              placeholder="https://example.com/image.jpg"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+            />
+            <p className="text-xs text-gray-500">Enter a valid image URL (leave empty to hide image)</p>
+          </div>
         </div>
       );
 
