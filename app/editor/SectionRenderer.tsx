@@ -18,6 +18,7 @@ export const SectionRenderer = memo(
           <section className="py-14 md:py-16 text-center bg-gradient-to-b from-[#FFF5F4] to-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
             {imageUrl && (
               <div className="mb-6 px-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={imageUrl}
                   alt="Hero image"
