@@ -52,8 +52,8 @@ export const SectionSortableItem = memo(function SectionSortableItem({
       className={[
         'w-full text-left border-2 rounded-xl p-4 bg-white transition group cursor-pointer',
         isSelected
-          ? 'border-primary shadow-lg ring-2 ring-primary ring-opacity-20'
-          : 'border-gray-200 hover:border-primary hover:shadow-md',
+          ? 'border-[#F17265] shadow-lg ring-2 ring-[#F17265] ring-opacity-20'
+          : 'border-gray-200 hover:border-[#F17265] hover:shadow-md',
       ].join(' ')}
     >
       <div className="flex items-center justify-between mb-3 gap-2">
@@ -63,7 +63,7 @@ export const SectionSortableItem = memo(function SectionSortableItem({
 
         <div className="flex items-center gap-2">
           {isSelected && (
-            <span className="text-xs px-3 py-1 rounded-full bg-primary-light text-primary border-2 border-primary font-medium">
+            <span className="text-xs px-3 py-1 rounded-full bg-[#FFF5F4] text-[#F17265] border-2 border-[#F17265] font-medium">
               Selected
             </span>
           )}
@@ -75,7 +75,7 @@ export const SectionSortableItem = memo(function SectionSortableItem({
               removeSection(section.id);
             }}
             aria-label="Delete section"
-            className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-white px-3 py-1 text-xs font-medium text-primary hover:bg-primary hover:text-white transition-all focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+            className="inline-flex items-center justify-center rounded-lg border-2 border-[#F17265] bg-white px-3 py-1 text-xs font-medium text-[#F17265] hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Delete
           </button>
@@ -86,7 +86,7 @@ export const SectionSortableItem = memo(function SectionSortableItem({
             onClick={(e) => e.stopPropagation()}
             {...listeners}
             {...attributes}
-            className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white px-3 py-1 text-xs font-bold text-gray-600 hover:border-primary hover:text-primary cursor-grab active:cursor-grabbing transition-all focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+            className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white px-3 py-1 text-xs font-bold text-gray-600 hover:border-[#F17265] hover:text-[#F17265] cursor-grab active:cursor-grabbing transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
             aria-label="Drag to reorder section"
           >
             ⠿
