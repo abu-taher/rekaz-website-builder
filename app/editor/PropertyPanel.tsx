@@ -126,7 +126,33 @@ export const PropertyPanel = memo(function PropertyPanel({
       );
     }
 
-    case 'features':
+    case 'features': {
+      const items: { title: string; description: string }[] = props.items ?? [];
+
+      const handleItemChange = (
+        index: number,
+        field: 'title' | 'description',
+        value: string
+      ) => {
+        const newItems = items.map((item, i) =>
+          i === index ? { ...item, [field]: value } : item
+        );
+        updateSection(section.id, { items: newItems });
+      };
+
+      const handleAddItem = () => {
+        const newItems = [
+          ...items,
+          { title: 'New Feature', description: 'Feature description' },
+        ];
+        updateSection(section.id, { items: newItems });
+      };
+
+      const handleRemoveItem = (index: number) => {
+        const newItems = items.filter((_, i) => i !== index);
+        updateSection(section.id, { items: newItems });
+      };
+
       return (
         <div className="space-y-4">
           <h3 className="text-base font-bold text-[#030014]">Features Settings</h3>
@@ -142,14 +168,64 @@ export const PropertyPanel = memo(function PropertyPanel({
             />
           </div>
 
-          {/* For assignment scope, we keep items static.
-              Could extend later with repeater UI. */}
-          <p className="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
-            Feature items are pre-defined for now. You can extend this to edit
-            individual items.
-          </p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">Feature Items</label>
+              <button
+                type="button"
+                onClick={handleAddItem}
+                className="text-xs px-3 py-1 rounded-lg border-2 border-[#F17265] text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all"
+              >
+                + Add Item
+              </button>
+            </div>
+
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className="border-2 border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-gray-500 uppercase">
+                    Item {index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveItem(index)}
+                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-500 hover:bg-red-50 transition-all"
+                    aria-label={`Remove feature item ${index + 1}`}
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <input
+                  type="text"
+                  value={item.title}
+                  onChange={(e) => handleItemChange(index, 'title', e.target.value)}
+                  placeholder="Feature title"
+                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+                />
+
+                <textarea
+                  value={item.description}
+                  onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                  placeholder="Feature description"
+                  rows={2}
+                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
+                />
+              </div>
+            ))}
+
+            {items.length === 0 && (
+              <p className="text-xs text-gray-500 text-center py-4 border-2 border-dashed border-gray-300 rounded-lg">
+                No feature items. Click "Add Item" to create one.
+              </p>
+            )}
+          </div>
         </div>
       );
+    }
 
     case 'footer':
       return (
