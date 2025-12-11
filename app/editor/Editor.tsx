@@ -10,6 +10,7 @@ import {
   closestCenter,
   DragEndEvent,
   DragStartEvent,
+  DragOverEvent,
   DragOverlay,
   TouchSensor,
   MouseSensor,
@@ -33,6 +34,8 @@ export function Editor() {
   const replaceAll = useLayoutStore((state) => state.replaceAll);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [activeSection, setActiveSection] = useState<SectionInstance | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -61,11 +64,19 @@ export function Editor() {
     const { active } = event;
     const section = sections.find((s) => s.id === active.id);
     setActiveSection(section || null);
+    setActiveId(active.id as string);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { over } = event;
+    setOverId(over?.id as string | null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveSection(null);
+    setActiveId(null);
+    setOverId(null);
     
     if (!over || active.id === over.id) return;
 
@@ -291,6 +302,7 @@ export function Editor() {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
@@ -298,9 +310,45 @@ export function Editor() {
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-4">
-                  {sections.map((section) => (
-                    <SectionSortableItem key={section.id} section={section} />
-                  ))}
+                  {sections.map((section) => {
+                    const activeIndex = activeId ? sections.findIndex(s => s.id === activeId) : -1;
+                    const overIndex = overId ? sections.findIndex(s => s.id === overId) : -1;
+                    
+                    // Show drop indicator above this section if:
+                    // - We're dragging (activeId exists)
+                    // - This section is the one being hovered over (overId matches)
+                    // - The dragged item would be placed above this item
+                    const showDropIndicatorAbove = 
+                      activeId && 
+                      overId === section.id && 
+                      activeId !== section.id &&
+                      activeIndex > overIndex;
+                    
+                    // Show drop indicator below this section if:
+                    // - We're dragging (activeId exists)
+                    // - This section is the one being hovered over (overId matches)
+                    // - The dragged item would be placed below this item
+                    const showDropIndicatorBelow = 
+                      activeId && 
+                      overId === section.id && 
+                      activeId !== section.id &&
+                      activeIndex < overIndex;
+
+                    return (
+                      <div key={section.id}>
+                        {showDropIndicatorAbove && (
+                          <div className="h-1 bg-[#F17265] rounded-full mb-4 animate-pulse" />
+                        )}
+                        <SectionSortableItem 
+                          section={section} 
+                          isOver={overId === section.id && activeId !== section.id}
+                        />
+                        {showDropIndicatorBelow && (
+                          <div className="h-1 bg-[#F17265] rounded-full mt-4 animate-pulse" />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </SortableContext>
               

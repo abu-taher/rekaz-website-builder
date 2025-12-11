@@ -9,10 +9,12 @@ import { useLayoutStore } from '@/lib/store';
 
 type Props = {
   section: SectionInstance;
+  isOver?: boolean;
 };
 
 export const SectionSortableItem = memo(function SectionSortableItem({
   section,
+  isOver = false,
 }: Props) {
   const selectedSectionId = useLayoutStore((s) => s.selectedSectionId);
   const selectSection = useLayoutStore((s) => s.selectSection);
@@ -63,9 +65,12 @@ export const SectionSortableItem = memo(function SectionSortableItem({
         isDragging
           ? 'opacity-50 border-dashed border-[#F17265] bg-[#FFF5F4]'
           : 'bg-white opacity-100',
-        isSelected && !isDragging
+        isOver && !isDragging
+          ? 'border-[#F17265] border-2 shadow-lg ring-2 ring-[#F17265] ring-opacity-20 scale-[1.01]'
+          : '',
+        isSelected && !isDragging && !isOver
           ? 'border-[#F17265] selected-section'
-          : !isDragging && 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
+          : !isDragging && !isOver && 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
       ].filter(Boolean).join(' ')}
     >
       <div className="flex flex-wrap items-center justify-between mb-3 gap-2">
