@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   description: "Build beautiful websites visually with our intuitive drag-and-drop builder. Add sections, edit properties, and export your designs as JSON.",
   keywords: ["website builder", "drag and drop", "page builder", "Next.js", "React"],
   authors: [{ name: "Rekaz" }],
+  icons: {
+    icon: "/favicon.svg",
+  },
   openGraph: {
     title: "Rekaz Website Builder",
     description: "Build beautiful websites visually with our intuitive drag-and-drop builder.",
