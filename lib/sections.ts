@@ -30,14 +30,16 @@ export type SectionProps =
 export interface SectionInstance {
   id: string;
   type: SectionType;
-  props: any; // we’ll refine later if needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: any; // Union type access handled via switch statements in components
 }
 
 export interface SectionDefinition {
   type: SectionType;
   label: string;
   description: string;
-  defaultProps: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultProps: any; // Typed via `satisfies` at definition site
 }
 
 export const SECTION_LIBRARY: SectionDefinition[] = [

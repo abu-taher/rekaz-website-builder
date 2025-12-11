@@ -219,7 +219,7 @@ export const PropertyPanel = memo(function PropertyPanel({
 
             {items.length === 0 && (
               <p className="text-xs text-gray-500 text-center py-4 border-2 border-dashed border-gray-300 rounded-lg">
-                No feature items. Click "Add Item" to create one.
+                No feature items. Click &quot;Add Item&quot; to create one.
               </p>
             )}
           </div>

@@ -4,7 +4,6 @@ import { useRef, useEffect } from 'react';
 
 import { SECTION_LIBRARY } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
-import { SectionRenderer } from './SectionRenderer';
 import { PropertyPanel } from './PropertyPanel';
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
 import {
@@ -16,7 +15,6 @@ import { SectionSortableItem } from './SectionSortableItem';
 export function Editor() {
   const sections = useLayoutStore((state) => state.sections);
   const selectedSectionId = useLayoutStore((state) => state.selectedSectionId);
-  const selectSection = useLayoutStore((state) => state.selectSection);
   const addSection = useLayoutStore((state) => state.addSection);
   const reorderSections = useLayoutStore((state) => state.reorderSections);
   const reset = useLayoutStore((state) => state.reset);
