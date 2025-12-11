@@ -4,7 +4,7 @@
 
 **A high-performance, SSR-friendly drag-and-drop website builder**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-success?style=for-the-badge)](https://your-deployment-url.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-success?style=for-the-badge)](https://rekaz-website-builder-pi.vercel.app)
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev/)
@@ -184,6 +184,6 @@ MIT License — feel free to use this project as a reference or starting point.
 
 **Built for the Rekaz Frontend Engineering Assignment**
 
-[View Live Demo](https://your-deployment-url.vercel.app) · [Report Issue](https://github.com/abu-taher/rekaz-website-builder/issues)
+[View Live Demo](https://rekaz-website-builder-pi.vercel.app) · [Report Issue](https://github.com/abu-taher/rekaz-website-builder/issues)
 
 </div>
