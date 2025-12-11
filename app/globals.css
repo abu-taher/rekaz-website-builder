@@ -17,8 +17,11 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #F8F9FB;
+  --color-foreground: #030014;
+  --color-primary: #F17265;
+  --color-primary-hover: #E25C4F;
+  --color-primary-light: #FFF5F4;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
