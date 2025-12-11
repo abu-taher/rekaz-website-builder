@@ -43,6 +43,7 @@ export const SectionRenderer = memo(
                 <a
                   key={item}
                   href="#"
+                  onClick={(e) => e.preventDefault()}
                   className="text-gray-700 hover:text-[#F17265] font-medium cursor-pointer transition text-sm md:text-base focus:outline-none focus:underline focus:decoration-[#F17265] focus:decoration-2 focus:underline-offset-4"
                 >
                   {item}
