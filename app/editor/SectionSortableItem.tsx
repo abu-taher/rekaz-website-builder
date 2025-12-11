@@ -45,6 +45,7 @@ export const SectionSortableItem = memo(function SectionSortableItem({
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
           selectSection(section.id);
         }
       }}
