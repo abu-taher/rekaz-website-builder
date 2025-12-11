@@ -7,9 +7,14 @@ export type HeroProps = {
   imageUrl?: string;
 };
 
+export type NavItem = {
+  label: string;
+  link: string;
+};
+
 export type HeaderProps = {
   logoText: string;
-  navItems: string[];
+  navItems: NavItem[];
 };
 
 export type FeaturesProps = {
@@ -60,7 +65,11 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
     description: 'Logo and simple navigation links.',
     defaultProps: {
       logoText: 'Rekaz',
-      navItems: ['Home', 'Features', 'Pricing'],
+      navItems: [
+        { label: 'Home', link: '#home' },
+        { label: 'Features', link: '#features' },
+        { label: 'Pricing', link: '#pricing' },
+      ],
     } satisfies HeaderProps,
   },
   {

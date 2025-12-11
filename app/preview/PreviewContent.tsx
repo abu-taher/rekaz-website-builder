@@ -104,14 +104,13 @@ function PreviewSection({ section }: { section: SectionInstance }) {
           <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="font-bold text-2xl text-[#030014]">{logoText}</div>
             <nav className="hidden md:flex items-center gap-8">
-              {navItems.map((item: string) => (
+              {navItems.map((item: { label: string; link: string }, idx: number) => (
                 <a
-                  key={item}
-                  href="#"
-                  onClick={(e) => e.preventDefault()}
+                  key={idx}
+                  href={item.link || '#'}
                   className="text-gray-700 hover:text-[#F17265] font-medium transition"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </nav>

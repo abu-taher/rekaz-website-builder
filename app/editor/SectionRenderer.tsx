@@ -52,14 +52,14 @@ export const SectionRenderer = memo(
           <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 py-4 border-b-2 border-gray-200">
             <div className="font-bold text-xl text-[#030014]">{logoText}</div>
             <nav className="flex flex-wrap gap-4 text-sm" role="navigation">
-              {navItems.map((item: string) => (
+              {navItems.map((item: { label: string; link: string }, idx: number) => (
                 <a
-                  key={item}
-                  href="#"
+                  key={idx}
+                  href={item.link || '#'}
                   onClick={(e) => e.preventDefault()}
                   className="text-gray-700 hover:text-[#F17265] font-medium cursor-pointer transition text-sm md:text-base focus:outline-none focus:underline focus:decoration-[#F17265] focus:decoration-2 focus:underline-offset-4"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </nav>

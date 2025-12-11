@@ -84,15 +84,30 @@ export const PropertyPanel = memo(function PropertyPanel({
       );
 
     case 'header': {
-      const navItemsString = (props.navItems ?? []).join(', ');
+      const navItems: { label: string; link: string }[] = props.navItems ?? [];
 
-      const handleNavItemsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value;
-        const items = raw
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
-        updateSection(section.id, { navItems: items });
+      const handleNavItemChange = (
+        index: number,
+        field: 'label' | 'link',
+        value: string
+      ) => {
+        const newItems = navItems.map((item, i) =>
+          i === index ? { ...item, [field]: value } : item
+        );
+        updateSection(section.id, { navItems: newItems });
+      };
+
+      const handleAddNavItem = () => {
+        const newItems = [
+          ...navItems,
+          { label: 'New Link', link: '#' },
+        ];
+        updateSection(section.id, { navItems: newItems });
+      };
+
+      const handleRemoveNavItem = (index: number) => {
+        const newItems = navItems.filter((_, i) => i !== index);
+        updateSection(section.id, { navItems: newItems });
       };
 
       return (
@@ -110,17 +125,60 @@ export const PropertyPanel = memo(function PropertyPanel({
             />
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="header-nav" className="text-sm font-medium text-gray-700 block">
-              Nav Items (comma separated)
-            </label>
-            <input
-              id="header-nav"
-              type="text"
-              value={navItemsString}
-              onChange={handleNavItemsChange}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
-            />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">Navigation Items</label>
+              <button
+                type="button"
+                onClick={handleAddNavItem}
+                className="text-xs px-3 py-1 rounded-lg border-2 border-[#F17265] text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all"
+              >
+                + Add Link
+              </button>
+            </div>
+
+            {navItems.map((item, index) => (
+              <div
+                key={index}
+                className="border-2 border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-gray-500 uppercase">
+                    Link {index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNavItem(index)}
+                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-500 hover:bg-red-50 transition-all"
+                    aria-label={`Remove nav item ${index + 1}`}
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <input
+                  type="text"
+                  value={item.label}
+                  onChange={(e) => handleNavItemChange(index, 'label', e.target.value)}
+                  placeholder="Link label"
+                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+                />
+
+                <input
+                  type="text"
+                  value={item.link}
+                  onChange={(e) => handleNavItemChange(index, 'link', e.target.value)}
+                  placeholder="URL (e.g., #section or https://...)"
+                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+                />
+              </div>
+            ))}
+
+            {navItems.length === 0 && (
+              <p className="text-xs text-gray-500 text-center py-4 border-2 border-dashed border-gray-300 rounded-lg">
+                No navigation items. Click &quot;Add Link&quot; to create one.
+              </p>
+            )}
           </div>
         </div>
       );
