@@ -156,7 +156,7 @@ export function Editor() {
             type="button"
             onClick={handleExport}
             aria-label="Export layout as JSON"
-            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-foreground font-medium hover:border-primary hover:text-primary hover:bg-primary-light transition-all focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
           >
             Export JSON
           </button>
@@ -165,7 +165,7 @@ export function Editor() {
             type="button"
             onClick={handleImportClick}
             aria-label="Import layout from JSON"
-            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-foreground font-medium hover:border-primary hover:text-primary hover:bg-primary-light transition-all focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
           >
             Import JSON
           </button>
@@ -174,7 +174,7 @@ export function Editor() {
             type="button"
             onClick={handleClear}
             aria-label="Clear all sections"
-            className="text-sm px-4 py-2 rounded-lg border-2 border-[#F17265] bg-white text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-primary bg-white text-primary font-medium hover:bg-primary hover:text-white transition-all focus:ring-2 focus:ring-primary focus:ring-opacity-20"
           >
             Clear
           </button>
@@ -195,7 +195,7 @@ export function Editor() {
       <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0">
         {/* Sidebar */}
         <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto scrollbar-styled max-h-full min-h-[50vh] bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm">
-          <h2 className="text-xl font-bold mb-4 text-[#030014]">Section Library</h2>
+          <h2 className="text-xl font-bold mb-4 text-foreground">Section Library</h2>
 
           <div className="space-y-2 mb-6">
             {SECTION_LIBRARY.map((def) => (
@@ -204,16 +204,16 @@ export function Editor() {
                 type="button"
                 onClick={() => addSection(def.type)}
                 aria-label={`Add ${def.label} section`}
-                className="w-full text-left border-2 border-gray-200 rounded-lg p-3 hover:border-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 bg-white"
+                className="w-full text-left border-2 border-gray-200 rounded-lg p-3 hover:border-primary hover:bg-primary-light transition-all focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 bg-white"
               >
-                <div className="font-semibold text-[#030014]">{def.label}</div>
+                <div className="font-semibold text-foreground">{def.label}</div>
                 <div className="text-sm text-gray-600 mt-1">{def.description}</div>
               </button>
             ))}
           </div>
 
           <div className="border-t-2 border-gray-200 pt-4 mt-4 space-y-3">
-            <h3 className="text-base font-bold text-[#030014]">Properties</h3>
+            <h3 className="text-base font-bold text-foreground">Properties</h3>
             <PropertyPanel section={selectedSection} />
           </div>
         </aside>
@@ -224,7 +224,7 @@ export function Editor() {
           role="main"
           aria-label="Preview area"
         >
-          <h2 className="text-xl font-bold mb-4 text-[#030014]">Preview</h2>
+          <h2 className="text-xl font-bold mb-4 text-foreground">Preview</h2>
 
           {sections.length === 0 ? (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-base text-gray-600 flex items-center justify-center min-h-[300px] bg-gray-50">

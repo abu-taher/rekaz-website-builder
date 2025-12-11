@@ -33,7 +33,7 @@ export const PropertyPanel = memo(function PropertyPanel({
     case 'hero':
       return (
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#030014]">Hero Settings</h3>
+          <h3 className="text-base font-bold text-foreground">Hero Settings</h3>
 
           <div className="space-y-2">
             <label htmlFor="hero-title" className="text-sm font-medium text-gray-700 block">Title</label>
@@ -42,7 +42,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               type="text"
               value={props.title ?? ''}
               onChange={handleChange('title')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
@@ -53,7 +53,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               value={props.subtitle ?? ''}
               onChange={handleChange('subtitle')}
               rows={3}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none resize-none transition-all"
             />
           </div>
 
@@ -64,7 +64,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               type="text"
               value={props.buttonLabel ?? ''}
               onChange={handleChange('buttonLabel')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
         </div>
@@ -84,7 +84,7 @@ export const PropertyPanel = memo(function PropertyPanel({
 
       return (
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#030014]">Header Settings</h3>
+          <h3 className="text-base font-bold text-foreground">Header Settings</h3>
 
           <div className="space-y-2">
             <label htmlFor="header-logo" className="text-sm font-medium text-gray-700 block">Logo Text</label>
@@ -93,7 +93,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               type="text"
               value={props.logoText ?? ''}
               onChange={handleChange('logoText')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
@@ -106,7 +106,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               type="text"
               value={navItemsString}
               onChange={handleNavItemsChange}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
         </div>
@@ -116,7 +116,7 @@ export const PropertyPanel = memo(function PropertyPanel({
     case 'features':
       return (
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#030014]">Features Settings</h3>
+          <h3 className="text-base font-bold text-foreground">Features Settings</h3>
 
           <div className="space-y-2">
             <label htmlFor="features-heading" className="text-sm font-medium text-gray-700 block">Heading</label>
@@ -125,7 +125,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               type="text"
               value={props.heading ?? ''}
               onChange={handleChange('heading')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
@@ -141,7 +141,7 @@ export const PropertyPanel = memo(function PropertyPanel({
     case 'footer':
       return (
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#030014]">Footer Settings</h3>
+          <h3 className="text-base font-bold text-foreground">Footer Settings</h3>
 
           <div className="space-y-2">
             <label htmlFor="footer-text" className="text-sm font-medium text-gray-700 block">Text</label>
@@ -150,7 +150,7 @@ export const PropertyPanel = memo(function PropertyPanel({
               value={props.text ?? ''}
               onChange={handleChange('text')}
               rows={3}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none resize-none transition-all"
             />
           </div>
         </div>
@@ -160,7 +160,7 @@ export const PropertyPanel = memo(function PropertyPanel({
       return (
         <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
           No editor defined for type:{' '}
-          <span className="font-mono font-semibold text-[#030014]">{section.type}</span>
+          <span className="font-mono font-semibold text-foreground">{section.type}</span>
         </div>
       );
   }
