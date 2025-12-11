@@ -41,21 +41,28 @@ export const SectionSortableItem = memo(function SectionSortableItem({
       ref={setNodeRef}
       style={style}
       onClick={() => selectSection(section.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          selectSection(section.id);
+        }
+      }}
       className={[
-        'w-full text-left border rounded-xl p-4 bg-slate-900/60 transition group',
+        'w-full text-left border-2 rounded-xl p-4 bg-white transition group cursor-pointer',
         isSelected
-          ? 'border-sky-500 shadow-[0_0_15px_rgba(56,189,248,0.15)]'
-          : 'border-slate-700 hover:border-sky-400 hover:shadow-[0_0_8px_rgba(56,189,248,0.08)]',
+          ? 'border-[#F17265] shadow-lg ring-2 ring-[#F17265] ring-opacity-20'
+          : 'border-gray-200 hover:border-[#F17265] hover:shadow-md',
       ].join(' ')}
     >
-      <div className="flex items-center justify-between mb-2 gap-2">
-        <span className="text-[11px] uppercase tracking-wide text-slate-400">
+      <div className="flex items-center justify-between mb-3 gap-2">
+        <span className="text-xs uppercase tracking-wide font-semibold text-gray-600">
           {section.type}
         </span>
 
         <div className="flex items-center gap-2">
           {isSelected && (
-            <span className="text-[10px] px-2 py-[2px] rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/40">
+            <span className="text-xs px-3 py-1 rounded-full bg-[#FFF5F4] text-[#F17265] border-2 border-[#F17265] font-medium">
               Selected
             </span>
           )}
@@ -66,7 +73,8 @@ export const SectionSortableItem = memo(function SectionSortableItem({
               e.stopPropagation();
               removeSection(section.id);
             }}
-            className="inline-flex items-center justify-center rounded-md border border-red-500/60 bg-slate-900 px-2 py-1 text-[10px] text-red-300 hover:bg-red-500/10 hover:border-red-400"
+            aria-label="Delete section"
+            className="inline-flex items-center justify-center rounded-lg border-2 border-[#F17265] bg-white px-3 py-1 text-xs font-medium text-[#F17265] hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Delete
           </button>
@@ -77,8 +85,8 @@ export const SectionSortableItem = memo(function SectionSortableItem({
             onClick={(e) => e.stopPropagation()}
             {...listeners}
             {...attributes}
-            className="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] text-slate-300 hover:border-sky-500/70 hover:text-sky-300 cursor-grab active:cursor-grabbing"
-            aria-label="Drag section"
+            className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white px-3 py-1 text-xs font-bold text-gray-600 hover:border-[#F17265] hover:text-[#F17265] cursor-grab active:cursor-grabbing transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
+            aria-label="Drag to reorder section"
           >
             ⠿
           </button>

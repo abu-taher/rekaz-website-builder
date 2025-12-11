@@ -15,17 +15,17 @@ export const SectionRenderer = memo(
       case 'hero': {
         const { title, subtitle, buttonLabel } = props ?? {};
         return (
-          <section className="py-14 md:py-16 text-center bg-gradient-to-b from-slate-900 to-slate-950 rounded-xl shadow-sm">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+          <section className="py-14 md:py-16 text-center bg-gradient-to-b from-[#FFF5F4] to-white rounded-xl shadow-lg border-2 border-gray-200">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#030014]">
               {title}
             </h2>
             {subtitle && (
-              <p className="text-slate-300 text-sm md:text-base mb-6 max-w-xl mx-auto">
+              <p className="text-gray-600 text-sm md:text-base mb-6 max-w-xl mx-auto">
                 {subtitle}
               </p>
             )}
             {buttonLabel && (
-              <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-sky-500/80 text-sm font-medium hover:bg-sky-500/10 hover:border-sky-400 transition">
+              <button className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#F17265] text-white text-sm font-semibold hover:bg-[#E25C4F] transition-all shadow-md hover:shadow-lg focus:ring-2 focus:ring-[#F17265] focus:ring-offset-2">
                 {buttonLabel}
               </button>
             )}
@@ -36,16 +36,17 @@ export const SectionRenderer = memo(
       case 'header': {
         const { logoText, navItems = [] } = props ?? {};
         return (
-          <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 py-3">
-            <div className="font-semibold text-lg">{logoText}</div>
-            <nav className="flex flex-wrap gap-3 text-sm text-slate-300">
+          <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 py-4 border-b-2 border-gray-200">
+            <div className="font-bold text-xl text-[#030014]">{logoText}</div>
+            <nav className="flex flex-wrap gap-4 text-sm" role="navigation">
               {navItems.map((item: string) => (
-                <span
+                <a
                   key={item}
-                  className="hover:text-sky-400 cursor-pointer transition text-xs md:text-sm"
+                  href="#"
+                  className="text-gray-700 hover:text-[#F17265] font-medium cursor-pointer transition text-sm md:text-base focus:outline-none focus:underline focus:decoration-[#F17265] focus:decoration-2 focus:underline-offset-4"
                 >
                   {item}
-                </span>
+                </a>
               ))}
             </nav>
           </header>
@@ -56,7 +57,7 @@ export const SectionRenderer = memo(
         const { heading, items = [] } = props ?? {};
         return (
           <section className="py-8 md:py-10">
-            <h3 className="text-xl md:text-2xl font-semibold mb-6">
+            <h3 className="text-2xl md:text-3xl font-bold mb-8 text-[#030014]">
               {heading}
             </h3>
             <div className="grid gap-4 md:grid-cols-3">
@@ -64,10 +65,10 @@ export const SectionRenderer = memo(
                 (item: { title: string; description: string }, idx: number) => (
                   <div
                     key={idx}
-                    className="border border-slate-700 rounded-lg p-4 bg-slate-900/80 hover:border-sky-500/70 transition"
+                    className="border-2 border-gray-200 rounded-xl p-5 bg-white hover:border-[#F17265] hover:shadow-md transition-all"
                   >
-                    <div className="font-medium mb-1">{item.title}</div>
-                    <p className="text-xs md:text-sm text-slate-300">
+                    <div className="font-bold text-lg mb-2 text-[#030014]">{item.title}</div>
+                    <p className="text-sm md:text-base text-gray-600">
                       {item.description}
                     </p>
                   </div>
@@ -81,7 +82,7 @@ export const SectionRenderer = memo(
       case 'footer': {
         const { text } = props ?? {};
         return (
-          <footer className="py-5 text-[11px] md:text-xs text-slate-400 text-center border-t border-slate-800 mt-4">
+          <footer className="py-6 text-sm md:text-base text-gray-600 text-center border-t-2 border-gray-200 mt-6">
             {text}
           </footer>
         );
@@ -89,8 +90,8 @@ export const SectionRenderer = memo(
 
       default:
         return (
-          <div className="text-xs text-slate-400">
-            Unknown section type: {type}
+          <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
+            Unknown section type: <span className="font-mono font-semibold text-[#030014]">{type}</span>
           </div>
         );
     }

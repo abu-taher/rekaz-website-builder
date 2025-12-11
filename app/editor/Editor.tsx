@@ -145,8 +145,8 @@ export function Editor() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] gap-4">
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-2 pb-2 border-b border-slate-800">
-        <div className="text-xs text-slate-400">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-2 pb-3 border-b-2 border-gray-200">
+        <div className="text-sm text-gray-600 font-medium">
           Build your page by adding sections, editing properties, and reordering
           them.
         </div>
@@ -155,7 +155,8 @@ export function Editor() {
           <button
             type="button"
             onClick={handleExport}
-            className="text-xs px-3 py-1.5 rounded-md border border-slate-700 bg-slate-900 hover:border-sky-500 hover:text-sky-300 transition"
+            aria-label="Export layout as JSON"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Export JSON
           </button>
@@ -163,7 +164,8 @@ export function Editor() {
           <button
             type="button"
             onClick={handleImportClick}
-            className="text-xs px-3 py-1.5 rounded-md border border-slate-700 bg-slate-900 hover:border-emerald-500 hover:text-emerald-300 transition"
+            aria-label="Import layout from JSON"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Import JSON
           </button>
@@ -171,7 +173,8 @@ export function Editor() {
           <button
             type="button"
             onClick={handleClear}
-            className="text-xs px-3 py-1.5 rounded-md border border-red-600/70 bg-slate-900 text-red-300 hover:bg-red-500/10 hover:border-red-400 transition"
+            aria-label="Clear all sections"
+            className="text-sm px-4 py-2 rounded-lg border-2 border-[#F17265] bg-white text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Clear
           </button>
@@ -183,6 +186,7 @@ export function Editor() {
             accept="application/json"
             onChange={handleFileChange}
             className="hidden"
+            aria-label="File input for importing JSON"
           />
         </div>
       </div>
@@ -190,35 +194,40 @@ export function Editor() {
       {/* Main content: sidebar + preview */}
       <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0">
         {/* Sidebar */}
-        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto max-h-full min-h-[50vh]">
-          <h2 className="text-lg font-semibold mb-3">Section Library</h2>
+        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto scrollbar-styled max-h-full min-h-[50vh] bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm">
+          <h2 className="text-xl font-bold mb-4 text-[#030014]">Section Library</h2>
 
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2 mb-6">
             {SECTION_LIBRARY.map((def) => (
               <button
                 key={def.type}
                 type="button"
                 onClick={() => addSection(def.type)}
-                className="w-full text-left border border-slate-700 rounded-lg p-3 hover:border-sky-500 hover:bg-slate-800/60 transition"
+                aria-label={`Add ${def.label} section`}
+                className="w-full text-left border-2 border-gray-200 rounded-lg p-3 hover:border-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 bg-white"
               >
-                <div className="font-medium">{def.label}</div>
-                <div className="text-xs text-slate-400">{def.description}</div>
+                <div className="font-semibold text-[#030014]">{def.label}</div>
+                <div className="text-sm text-gray-600 mt-1">{def.description}</div>
               </button>
             ))}
           </div>
 
-          <div className="border-t border-slate-800 pt-3 mt-2 space-y-2">
-            <h3 className="text-sm font-semibold">Properties</h3>
+          <div className="border-t-2 border-gray-200 pt-4 mt-4 space-y-3">
+            <h3 className="text-base font-bold text-[#030014]">Properties</h3>
             <PropertyPanel section={selectedSection} />
           </div>
         </aside>
 
         {/* Preview */}
-        <main className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-y-auto max-h-full min-h-[50vh]">
-          <h2 className="text-lg font-semibold mb-3">Preview</h2>
+        <main 
+          className="flex-1 bg-white border-2 border-gray-200 rounded-xl p-6 overflow-y-auto scrollbar-styled max-h-full min-h-[50vh] shadow-sm"
+          role="main"
+          aria-label="Preview area"
+        >
+          <h2 className="text-xl font-bold mb-4 text-[#030014]">Preview</h2>
 
           {sections.length === 0 ? (
-            <div className="border border-dashed border-slate-700 rounded-lg p-6 text-sm text-slate-400 flex items-center justify-center min-h-[300px]">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-base text-gray-600 flex items-center justify-center min-h-[300px] bg-gray-50">
               No sections yet. Add one from the library.
             </div>
           ) : (
