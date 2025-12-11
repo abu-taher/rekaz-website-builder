@@ -204,7 +204,7 @@ export function Editor() {
                 type="button"
                 onClick={() => addSection(def.type)}
                 aria-label={`Add ${def.label} section`}
-                className="w-full text-left border-2 border-gray-200 rounded-lg p-3 hover:border-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 bg-white"
+                className="section-library-item w-full text-left border-2 border-gray-200 rounded-lg p-3 hover:border-[#F17265] hover:bg-[#FFF5F4] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 bg-white"
               >
                 <div className="font-semibold text-[#030014]">{def.label}</div>
                 <div className="text-sm text-gray-600 mt-1">{def.description}</div>
@@ -227,8 +227,9 @@ export function Editor() {
           <h2 className="text-xl font-bold mb-4 text-[#030014]">Preview</h2>
 
           {sections.length === 0 ? (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-base text-gray-600 flex items-center justify-center min-h-[300px] bg-gray-50">
-              No sections yet. Add one from the library.
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-base text-gray-600 flex flex-col items-center justify-center min-h-[300px] bg-gray-50 animate-scale-in">
+              <span className="text-4xl mb-3">📦</span>
+              <span>No sections yet. Add one from the library.</span>
             </div>
           ) : (
             <DndContext

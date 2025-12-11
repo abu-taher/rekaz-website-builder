@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { SectionInstance } from '@/lib/sections';
@@ -17,6 +17,7 @@ export const SectionSortableItem = memo(function SectionSortableItem({
   const selectedSectionId = useLayoutStore((s) => s.selectedSectionId);
   const selectSection = useLayoutStore((s) => s.selectSection);
   const removeSection = useLayoutStore((s) => s.removeSection);
+  const isNewRef = useRef(true);
 
   const isSelected = section.id === selectedSectionId;
 
@@ -29,11 +30,18 @@ export const SectionSortableItem = memo(function SectionSortableItem({
     isDragging,
   } = useSortable({ id: section.id });
 
+  // Mark as not new after first render
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      isNewRef.current = false;
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.7 : 1,
-    cursor: isDragging ? 'grabbing' : 'default',
+    transition: transition || 'transform 0.2s ease',
+    zIndex: isDragging ? 50 : 'auto',
   };
 
   return (
@@ -50,10 +58,15 @@ export const SectionSortableItem = memo(function SectionSortableItem({
         }
       }}
       className={[
-        'w-full text-left border-2 rounded-xl p-4 bg-white transition group cursor-pointer',
+        'w-full text-left border-2 rounded-xl p-4 bg-white group cursor-pointer',
+        'transition-all duration-200 ease-out',
+        'animate-fade-slide-in',
+        isDragging
+          ? 'dragging-overlay opacity-90 border-[#F17265]'
+          : 'opacity-100',
         isSelected
-          ? 'border-[#F17265] shadow-lg ring-2 ring-[#F17265] ring-opacity-20'
-          : 'border-gray-200 hover:border-[#F17265] hover:shadow-md',
+          ? 'border-[#F17265] selected-section'
+          : 'border-gray-200 hover:border-[#F17265] hover:shadow-md hover:-translate-y-0.5',
       ].join(' ')}
     >
       <div className="flex items-center justify-between mb-3 gap-2">
