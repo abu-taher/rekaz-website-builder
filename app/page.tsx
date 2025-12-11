@@ -6,7 +6,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between bg-white shadow-sm">
         <h1 className="text-2xl font-bold tracking-tight text-[#030014] text-center w-full">
-          Rekaz Mini Website Builder
+          Rekaz Website Builder
         </h1>
       </header>
 
