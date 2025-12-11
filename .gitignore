@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI assistant files
+CLAUDE.md
+.claude/
+*_claude_*
+*.claude.*
