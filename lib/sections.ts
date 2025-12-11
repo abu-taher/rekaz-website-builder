@@ -49,17 +49,6 @@ export interface SectionDefinition {
 
 export const SECTION_LIBRARY: SectionDefinition[] = [
   {
-    type: 'hero',
-    label: 'Hero',
-    description: 'Big headline with supporting text and a call-to-action.',
-    defaultProps: {
-      title: 'Build Beautiful Websites Visually',
-      subtitle: 'Drag, drop, and customize. Create stunning pages in minutes with our intuitive website builder.',
-      buttonLabel: 'Start Building',
-      imageUrl: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1200&h=600&fit=crop',
-    } satisfies HeroProps,
-  },
-  {
     type: 'header',
     label: 'Header',
     description: 'Logo and simple navigation links.',
@@ -71,6 +60,17 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
         { label: 'Pricing', link: '#pricing' },
       ],
     } satisfies HeaderProps,
+  },
+  {
+    type: 'hero',
+    label: 'Hero',
+    description: 'Big headline with supporting text and a call-to-action.',
+    defaultProps: {
+      title: 'Build Beautiful Websites Visually',
+      subtitle: 'Drag, drop, and customize. Create stunning pages in minutes with our intuitive website builder.',
+      buttonLabel: 'Start Building',
+      imageUrl: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1200&h=600&fit=crop',
+    } satisfies HeroProps,
   },
   {
     type: 'features',
