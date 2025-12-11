@@ -7,30 +7,31 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
+## Live Demo
+
+🚀 **[View Live Demo](https://your-deployment-url.vercel.app)** *(Update with your deployment URL)*
+
 ## Features
 
-- **Visual Editor** - Intuitive drag-and-drop interface for building websites
-- **Responsive Design** - Mobile-first approach with responsive breakpoints
+- **Section Library (Click-to-Add)** - Pre-made sections (Hero, Header, Features, Footer) that users can click to add
 - **Live Preview** - Real-time preview of your website as you build
+- **Import/Export JSON** - Save and load layouts as JSON files for persistence
+- **Editable Sections** - Edit section properties including titles, descriptions, and image URLs
+- **Drag & Drop Reorder** - Reorder sections by dragging and dropping
+- **Delete Sections** - Remove unwanted sections with one click
 - **Auto-Save** - Automatic localStorage persistence of your work
-- **Import/Export** - Save and load layouts as JSON files
-- **Section Library** - Pre-built sections (Hero, Header, Features, Footer)
-- **Property Editor** - Dynamic property editing for each section
-- **SSR Ready** - Built with Next.js for optimal performance and SEO
+- **Responsive Design** - Mobile-first approach with responsive breakpoints
+- **Subtle Animations** - Smooth transitions and animations throughout the app
+- **SSR Friendly** - Built with Next.js App Router, client components pushed down the tree
 
 ## Tech Stack
 
 - **Framework:** Next.js 16 with App Router
 - **Frontend:** React 19, TypeScript
 - **Styling:** Tailwind CSS 4
-- **State Management:** Zustand
+- **State Management:** Zustand (with selective subscriptions to prevent re-renders)
 - **Drag & Drop:** @dnd-kit
-- **Build Tool:** Next.js built-in bundler
-
-## Screenshots
-
-<!-- TODO: Add actual screenshots when available -->
-*Coming soon - Screenshots of the editor interface and example websites*
+- **Performance:** React.memo with custom comparison functions
 
 ## Getting Started
 
@@ -43,7 +44,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/rekaz-website-builder.git
+   git clone https://github.com/YOUR_USERNAME/rekaz-website-builder.git
    cd rekaz-website-builder
    ```
 
@@ -70,22 +71,37 @@ npm run build
 npm run start
 ```
 
+### Deployment
+
+Deploy to Vercel with one click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/rekaz-website-builder)
+
+Or deploy manually:
+```bash
+npm run build
+npm run start
+```
+
 ## Usage
 
 ### Building Your First Website
 
 1. **Add Sections** - Click on any section from the library (Hero, Header, Features, Footer) to add it to your page
-2. **Edit Properties** - Select a section to edit its properties in the sidebar panel
-3. **Reorder Sections** - Drag and drop sections to reorder them
-4. **Preview** - See your changes in real-time in the preview panel
-5. **Export** - Save your layout as a JSON file for later use
+2. **Edit Properties** - Select a section to edit its properties in the sidebar panel (title, description, image URL, etc.)
+3. **Reorder Sections** - Drag and drop sections using the drag handle (⠿) to reorder them
+4. **Delete Sections** - Click the "Delete" button on any section to remove it
+5. **Preview** - See your changes in real-time in the preview panel
+6. **Export** - Save your layout as a JSON file for later use
 
 ### Section Types
 
-- **Hero** - Large banner with title, subtitle, and call-to-action button
-- **Header** - Navigation bar with logo and menu items
-- **Features** - Three-column feature showcase
-- **Footer** - Simple footer with copyright text
+| Section | Editable Properties |
+|---------|---------------------|
+| **Hero** | Title, Subtitle, Button Label, Image URL |
+| **Header** | Logo Text, Navigation Items |
+| **Features** | Heading, Feature Items (title + description each) |
+| **Footer** | Footer Text |
 
 ### Import/Export
 
@@ -95,47 +111,30 @@ npm run start
 
 ## Architecture
 
-The application follows a modular architecture:
+The application follows a modular architecture with SSR-friendly patterns:
 
 ```
 app/
-├── page.tsx              # Main homepage
-├── layout.tsx            # Root layout
-├── globals.css           # Global styles
-└── editor/               # Editor components
+├── page.tsx              # Server Component - Main homepage
+├── layout.tsx            # Server Component - Root layout with metadata
+├── globals.css           # Global styles with animations
+└── editor/               # Client Components (pushed down)
     ├── Editor.tsx        # Main editor interface
-    ├── SectionRenderer.tsx
-    ├── PropertyPanel.tsx
-    └── SectionSortableItem.tsx
+    ├── SectionRenderer.tsx   # Renders section previews
+    ├── PropertyPanel.tsx     # Property editing forms
+    └── SectionSortableItem.tsx  # Drag-and-drop wrapper
 
 lib/
-├── store.ts              # Zustand state management
-└── sections.ts           # Section definitions
+├── store.ts              # Zustand store with selective subscriptions
+└── sections.ts           # Section type definitions and defaults
 ```
 
-### Key Features
+### Performance Optimizations
 
-- **State Management:** Zustand store handles all layout state with localStorage persistence
-- **Type Safety:** Full TypeScript coverage with proper type definitions
-- **Performance:** React memoization and efficient re-rendering
-- **Responsive:** Mobile-first design with Tailwind CSS
-
-## Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. **Fork the repository**
-2. **Create your feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add some amazing feature'`)
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
-
-### Development Guidelines
-
-- Follow the existing code style and conventions
-- Add TypeScript types for new features
-- Test your changes thoroughly
-- Update documentation as needed
+- **Selective State Subscriptions:** Components only subscribe to the specific state they need
+- **React.memo:** All section components are memoized with custom comparison functions
+- **Efficient Re-renders:** Updates to one section don't cause re-renders of others
+- **CSS Animations:** Using CSS keyframes instead of JS for smooth animations
 
 ## Available Scripts
 
@@ -146,18 +145,13 @@ Contributions are welcome! Here's how you can help:
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint |
 
-## Known Issues
-
-- Limited section types - could be expanded with more components
-
 ## Roadmap
 
 - [ ] Add more section types (testimonials, pricing, contact)
-- [ ] Implement custom CSS editing
-- [ ] Add theme system
 - [ ] Implement undo/redo functionality
-- [ ] Add collaborative editing
+- [ ] Add theme/color customization
 - [ ] Export to static HTML
+- [ ] Add more image positioning options
 
 ## License
 
@@ -170,13 +164,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Drag and drop powered by [@dnd-kit](https://dndkit.com/)
 - State management with [Zustand](https://zustand-demo.pmnd.rs/)
 
-## Contact
-
-- **Project Link:** [https://github.com/yourusername/rekaz-website-builder](https://github.com/yourusername/rekaz-website-builder)
-- **Issues:** [https://github.com/yourusername/rekaz-website-builder/issues](https://github.com/yourusername/rekaz-website-builder/issues)
-
 ---
 
 <div align="center">
-  <sub>Built with ❤️ using Next.js and React</sub>
+  <sub>Built with ❤️ for the Rekaz Frontend Assignment</sub>
 </div>
