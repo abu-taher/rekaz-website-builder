@@ -5,8 +5,15 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F8F9FB;
+  --foreground: #030014;
+  --primary: #F17265;
+  --primary-hover: #E25C4F;
+  --primary-light: #FFF5F4;
+  --border: #E5E7EB;
+  --border-hover: #F17265;
+  --card-bg: #FFFFFF;
+  --secondary-text: #4B5563;
 }
 
 @theme inline {
@@ -16,15 +23,50 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom styled scrollbar - Light theme with brand colors */
+.scrollbar-styled {
+  scrollbar-width: thin;
+  scrollbar-color: #F17265 #FFF5F4;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.scrollbar-styled::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-styled::-webkit-scrollbar-track {
+  background: #FFF5F4;
+  border-radius: 5px;
+  border: 1px solid #FFE8E6;
+}
+
+.scrollbar-styled::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #F17265 0%, #E25C4F 100%);
+  border-radius: 5px;
+  border: 2px solid #FFF5F4;
+  transition: all 0.3s ease;
+}
+
+.scrollbar-styled::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #E25C4F 0%, #D34A3D 100%);
+  border-color: #FFE8E6;
+  box-shadow: 0 0 8px rgba(241, 114, 101, 0.3);
+}
+
+.scrollbar-styled::-webkit-scrollbar-thumb:active {
+  background: #D34A3D;
+  border-color: #FFF5F4;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #F17265;
+  outline-offset: 2px;
 }
