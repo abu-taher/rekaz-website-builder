@@ -77,7 +77,7 @@ function PreviewSection({ section, sectionId }: { section: SectionInstance; sect
       return (
         <section 
           id={sectionId}
-          className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white scroll-mt-20">
+          className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white scroll-mt-16 md:scroll-mt-20">
           {imageUrl && (
             <div className="absolute inset-0 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -115,7 +115,7 @@ function PreviewSection({ section, sectionId }: { section: SectionInstance; sect
     case 'features': {
       const { heading, items = [] } = props ?? {};
       return (
-        <section id={sectionId} className="py-16 md:py-24 bg-white scroll-mt-20">
+        <section id={sectionId} className="py-16 md:py-24 bg-white scroll-mt-16 md:scroll-mt-20">
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-[#030014]">
               {heading}
@@ -146,7 +146,7 @@ function PreviewSection({ section, sectionId }: { section: SectionInstance; sect
     case 'footer': {
       const { text } = props ?? {};
       return (
-        <footer id={sectionId} className="py-8 bg-[#030014] text-gray-400 scroll-mt-20">
+        <footer id={sectionId} className="py-8 bg-[#030014] text-gray-400 scroll-mt-16 md:scroll-mt-20">
           <div className="max-w-6xl mx-auto px-6 text-center">
             <p>{text}</p>
           </div>
@@ -171,15 +171,18 @@ const HeaderSection = memo(function HeaderSection({ props }: { props: Record<str
       const targetId = link.slice(1); // Remove the #
       const targetElement = document.getElementById(targetId);
       
-      if (targetElement) {
-        targetElement.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-      
-      // Close mobile menu after clicking
+      // Close mobile menu first
       setIsMobileMenuOpen(false);
+      
+      if (targetElement) {
+        // Delay scroll to allow menu to close first (fixes mobile scroll position)
+        setTimeout(() => {
+          targetElement.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 100);
+      }
     }
   };
 
