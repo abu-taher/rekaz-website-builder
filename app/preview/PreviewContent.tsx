@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import Link from 'next/link';
 import type { SectionInstance } from '@/lib/sections';
 
@@ -98,30 +98,7 @@ function PreviewSection({ section }: { section: SectionInstance }) {
     }
 
     case 'header': {
-      const { logoText, navItems = [] } = props ?? {};
-      return (
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="font-bold text-2xl text-[#030014]">{logoText}</div>
-            <nav className="hidden md:flex items-center gap-8">
-              {navItems.map((item: { label: string; link: string }, idx: number) => (
-                <a
-                  key={idx}
-                  href={item.link || '#'}
-                  className="text-gray-700 hover:text-[#F17265] font-medium transition"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-            <button className="md:hidden text-gray-700">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        </header>
-      );
+      return <HeaderSection props={props} />;
     }
 
     case 'features': {
@@ -170,3 +147,66 @@ function PreviewSection({ section }: { section: SectionInstance }) {
       return null;
   }
 }
+
+// Separate component for header to manage mobile menu state
+const HeaderSection = memo(function HeaderSection({ props }: { props: Record<string, unknown> }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { logoText, navItems = [] } = props ?? {};
+
+  return (
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="font-bold text-2xl text-[#030014]">{logoText as string}</div>
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          {(navItems as { label: string; link: string }[]).map((item, idx) => (
+            <a
+              key={idx}
+              href={item.link || '#'}
+              className="text-gray-700 hover:text-[#F17265] font-medium transition"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        
+        {/* Mobile Menu Button */}
+        <button 
+          className="md:hidden text-gray-700 p-2 -mr-2 hover:bg-gray-100 rounded-lg transition-colors"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMobileMenuOpen}
+        >
+          {isMobileMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+      </div>
+      
+      {/* Mobile Navigation Menu */}
+      {isMobileMenuOpen && (
+        <nav className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-md animate-fade-slide-in">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-2">
+            {(navItems as { label: string; link: string }[]).map((item, idx) => (
+              <a
+                key={idx}
+                href={item.link || '#'}
+                className="text-gray-700 hover:text-[#F17265] hover:bg-[#FFF5F4] font-medium py-3 px-4 rounded-lg transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )}
+    </header>
+  );
+});
