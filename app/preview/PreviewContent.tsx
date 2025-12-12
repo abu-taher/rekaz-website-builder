@@ -50,23 +50,34 @@ export function PreviewContent() {
     );
   }
 
+  // Count sections by type to create unique IDs (e.g., hero, hero-2, hero-3)
+  const sectionCounts: Record<string, number> = {};
+  const sectionsWithIds = sections.map((section) => {
+    const count = (sectionCounts[section.type] || 0) + 1;
+    sectionCounts[section.type] = count;
+    const sectionId = count === 1 ? section.type : `${section.type}-${count}`;
+    return { ...section, sectionId };
+  });
+
   return (
-    <div className="min-h-screen bg-white">
-      {sections.map((section) => (
-        <PreviewSection key={section.id} section={section} />
+    <div className="min-h-screen bg-white scroll-smooth">
+      {sectionsWithIds.map((section) => (
+        <PreviewSection key={section.id} section={section} sectionId={section.sectionId} />
       ))}
     </div>
   );
 }
 
-function PreviewSection({ section }: { section: SectionInstance }) {
+function PreviewSection({ section, sectionId }: { section: SectionInstance; sectionId: string }) {
   const { type, props } = section;
 
   switch (type) {
     case 'hero': {
       const { title, subtitle, buttonLabel, imageUrl } = props ?? {};
       return (
-        <section className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white">
+        <section 
+          id={sectionId}
+          className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white scroll-mt-20">
           {imageUrl && (
             <div className="absolute inset-0 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -104,7 +115,7 @@ function PreviewSection({ section }: { section: SectionInstance }) {
     case 'features': {
       const { heading, items = [] } = props ?? {};
       return (
-        <section className="py-16 md:py-24 bg-white">
+        <section id={sectionId} className="py-16 md:py-24 bg-white scroll-mt-20">
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-[#030014]">
               {heading}
@@ -135,7 +146,7 @@ function PreviewSection({ section }: { section: SectionInstance }) {
     case 'footer': {
       const { text } = props ?? {};
       return (
-        <footer className="py-8 bg-[#030014] text-gray-400">
+        <footer id={sectionId} className="py-8 bg-[#030014] text-gray-400 scroll-mt-20">
           <div className="max-w-6xl mx-auto px-6 text-center">
             <p>{text}</p>
           </div>
@@ -153,8 +164,27 @@ const HeaderSection = memo(function HeaderSection({ props }: { props: Record<str
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { logoText, navItems = [] } = props ?? {};
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
+    // Check if it's a hash link (e.g., #features, #hero)
+    if (link.startsWith('#')) {
+      e.preventDefault();
+      const targetId = link.slice(1); // Remove the #
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        targetElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+      
+      // Close mobile menu after clicking
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <header id="header" className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="font-bold text-2xl text-[#030014]">{logoText as string}</div>
         
@@ -164,7 +194,8 @@ const HeaderSection = memo(function HeaderSection({ props }: { props: Record<str
             <a
               key={idx}
               href={item.link || '#'}
-              className="text-gray-700 hover:text-[#F17265] font-medium transition"
+              onClick={(e) => handleNavClick(e, item.link || '#')}
+              className="text-gray-700 hover:text-[#F17265] font-medium transition cursor-pointer"
             >
               {item.label}
             </a>
@@ -198,8 +229,8 @@ const HeaderSection = memo(function HeaderSection({ props }: { props: Record<str
               <a
                 key={idx}
                 href={item.link || '#'}
-                className="text-gray-700 hover:text-[#F17265] hover:bg-[#FFF5F4] font-medium py-3 px-4 rounded-lg transition-all"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => handleNavClick(e, item.link || '#')}
+                className="text-gray-700 hover:text-[#F17265] hover:bg-[#FFF5F4] font-medium py-3 px-4 rounded-lg transition-all cursor-pointer"
               >
                 {item.label}
               </a>

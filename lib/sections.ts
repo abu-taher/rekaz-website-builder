@@ -55,9 +55,9 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
     defaultProps: {
       logoText: 'Rekaz',
       navItems: [
-        { label: 'Home', link: '#home' },
+        { label: 'Home', link: '#hero' },
         { label: 'Features', link: '#features' },
-        { label: 'Pricing', link: '#pricing' },
+        { label: 'Contact', link: '#footer' },
       ],
     } satisfies HeaderProps,
   },

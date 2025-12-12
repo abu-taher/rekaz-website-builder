@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import type { SectionInstance } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
 
@@ -8,10 +8,22 @@ type PropertyPanelProps = {
   section: SectionInstance | undefined;
 };
 
+// Helper to get section display name
+const getSectionDisplayName = (type: string, index: number) => {
+  const names: Record<string, string> = {
+    hero: 'Hero',
+    header: 'Header',
+    features: 'Features',
+    footer: 'Footer',
+  };
+  return index > 0 ? `${names[type] || type} ${index + 1}` : names[type] || type;
+};
+
 export const PropertyPanel = memo(function PropertyPanel({
   section,
 }: PropertyPanelProps) {
   const updateSection = useLayoutStore((s) => s.updateSection);
+  const allSections = useLayoutStore((s) => s.sections);
 
   if (!section) {
     return (
@@ -86,6 +98,20 @@ export const PropertyPanel = memo(function PropertyPanel({
     case 'header': {
       const navItems: { label: string; link: string }[] = props.navItems ?? [];
 
+      // Get available sections for linking (exclude current header)
+      const availableSections = allSections
+        .filter((s) => s.type !== 'header')
+        .map((s, idx, arr) => {
+          // Count how many of this type came before
+          const typeCount = arr.slice(0, idx).filter((prev) => prev.type === s.type).length;
+          return {
+            id: s.id,
+            type: s.type,
+            displayName: getSectionDisplayName(s.type, typeCount),
+            linkValue: typeCount > 0 ? `#${s.type}-${typeCount + 1}` : `#${s.type}`,
+          };
+        });
+
       const handleNavItemChange = (
         index: number,
         field: 'label' | 'link',
@@ -108,6 +134,11 @@ export const PropertyPanel = memo(function PropertyPanel({
       const handleRemoveNavItem = (index: number) => {
         const newItems = navItems.filter((_, i) => i !== index);
         updateSection(section.id, { navItems: newItems });
+      };
+
+      // Check if a link is a section link or external
+      const isExternalLink = (link: string): boolean => {
+        return Boolean(link && !link.startsWith('#'));
       };
 
       return (
@@ -138,40 +169,16 @@ export const PropertyPanel = memo(function PropertyPanel({
             </div>
 
             {navItems.map((item, index) => (
-              <div
+              <NavItemEditor
                 key={index}
-                className="border-2 border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-gray-500 uppercase">
-                    Link {index + 1}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNavItem(index)}
-                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-500 hover:bg-red-50 transition-all"
-                    aria-label={`Remove nav item ${index + 1}`}
-                  >
-                    Remove
-                  </button>
-                </div>
-
-                <input
-                  type="text"
-                  value={item.label}
-                  onChange={(e) => handleNavItemChange(index, 'label', e.target.value)}
-                  placeholder="Link label"
-                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
-                />
-
-                <input
-                  type="text"
-                  value={item.link}
-                  onChange={(e) => handleNavItemChange(index, 'link', e.target.value)}
-                  placeholder="URL (e.g., #section or https://...)"
-                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
-                />
-              </div>
+                index={index}
+                item={item}
+                availableSections={availableSections}
+                isExternal={isExternalLink(item.link)}
+                onLabelChange={(value) => handleNavItemChange(index, 'label', value)}
+                onLinkChange={(value) => handleNavItemChange(index, 'link', value)}
+                onRemove={() => handleRemoveNavItem(index)}
+              />
             ))}
 
             {navItems.length === 0 && (
@@ -312,3 +319,134 @@ export const PropertyPanel = memo(function PropertyPanel({
       );
   }
 });
+
+// Separate component for nav item editing with link type selection
+type NavItemEditorProps = {
+  index: number;
+  item: { label: string; link: string };
+  availableSections: { id: string; type: string; displayName: string; linkValue: string }[];
+  isExternal: boolean;
+  onLabelChange: (value: string) => void;
+  onLinkChange: (value: string) => void;
+  onRemove: () => void;
+};
+
+function NavItemEditor({
+  index,
+  item,
+  availableSections,
+  isExternal,
+  onLabelChange,
+  onLinkChange,
+  onRemove,
+}: NavItemEditorProps) {
+  const [linkType, setLinkType] = useState<'section' | 'external'>(
+    isExternal ? 'external' : 'section'
+  );
+
+  const handleLinkTypeChange = (type: 'section' | 'external') => {
+    setLinkType(type);
+    if (type === 'section') {
+      // Reset to first available section or empty
+      onLinkChange(availableSections[0]?.linkValue || '#');
+    } else {
+      // Reset to empty for external URL
+      onLinkChange('https://');
+    }
+  };
+
+  return (
+    <div className="border-2 border-gray-200 rounded-lg p-3 space-y-3 bg-gray-50">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-gray-500 uppercase">
+          Link {index + 1}
+        </span>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="text-xs px-3 py-1.5 rounded border border-red-300 text-red-500 hover:bg-red-50 active:bg-red-100 transition-all min-h-[32px]"
+          aria-label={`Remove nav item ${index + 1}`}
+        >
+          Remove
+        </button>
+      </div>
+
+      {/* Label Input */}
+      <div className="space-y-1">
+        <label className="text-xs text-gray-500">Label</label>
+        <input
+          type="text"
+          value={item.label}
+          onChange={(e) => onLabelChange(e.target.value)}
+          placeholder="Link label"
+          className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
+        />
+      </div>
+
+      {/* Link Type Selector */}
+      <div className="space-y-2">
+        <label className="text-xs text-gray-500">Link To</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => handleLinkTypeChange('section')}
+            className={`flex-1 text-xs sm:text-sm py-3 px-3 rounded-lg border-2 font-medium transition-all min-h-[44px] ${
+              linkType === 'section'
+                ? 'border-[#F17265] bg-[#FFF5F4] text-[#F17265]'
+                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400 active:bg-gray-50'
+            }`}
+          >
+            📑 Section
+          </button>
+          <button
+            type="button"
+            onClick={() => handleLinkTypeChange('external')}
+            className={`flex-1 text-xs sm:text-sm py-3 px-3 rounded-lg border-2 font-medium transition-all min-h-[44px] ${
+              linkType === 'external'
+                ? 'border-[#F17265] bg-[#FFF5F4] text-[#F17265]'
+                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400 active:bg-gray-50'
+            }`}
+          >
+            🔗 External
+          </button>
+        </div>
+      </div>
+
+      {/* Link Input based on type */}
+      {linkType === 'section' ? (
+        <div className="space-y-1">
+          <label className="text-xs text-gray-500">Select Section</label>
+          {availableSections.length > 0 ? (
+            <select
+              value={item.link}
+              onChange={(e) => onLinkChange(e.target.value)}
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2.5 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all cursor-pointer min-h-[44px]"
+            >
+              <option value="#">-- Select a section --</option>
+              {availableSections.map((sec) => (
+                <option key={sec.id} value={sec.linkValue}>
+                  {sec.displayName}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <p className="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+              No sections available. Add Hero, Features, or Footer sections first.
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-1">
+          <label className="text-xs text-gray-500">External URL</label>
+          <input
+            type="url"
+            value={item.link}
+            onChange={(e) => onLinkChange(e.target.value)}
+            placeholder="https://example.com"
+            className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2.5 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all min-h-[44px]"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
