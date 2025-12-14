@@ -36,7 +36,7 @@ export const PropertyPanel = memo(function PropertyPanel({
 
   if (!section) {
     return (
-      <Card variant="dashed" padding="md" className="rounded-lg">
+      <Card variant="dashed" padding="md" rounded="lg">
         <p className="text-sm text-gray-600 text-center">
           Select a section in the preview to edit its content.
         </p>
@@ -185,7 +185,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             ))}
 
             {navItems.length === 0 && (
-              <Card variant="dashed" padding="md" className="rounded-lg">
+              <Card variant="dashed" padding="md" rounded="lg">
                 <p className="text-xs text-gray-500 text-center">
                   No navigation items. Click &quot;Add Link&quot; to create one.
                 </p>
@@ -246,7 +246,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             </div>
 
             {items.map((item, index) => (
-              <Card key={index} variant="muted" padding="sm" className="rounded-lg space-y-2">
+              <Card key={index} variant="muted" padding="sm" rounded="lg" className="space-y-2">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-gray-500 uppercase">
                     Item {index + 1}
@@ -278,7 +278,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             ))}
 
             {items.length === 0 && (
-              <Card variant="dashed" padding="md" className="rounded-lg">
+              <Card variant="dashed" padding="md" rounded="lg">
                 <p className="text-xs text-gray-500 text-center">
                   No feature items. Click &quot;Add Item&quot; to create one.
                 </p>
@@ -354,7 +354,7 @@ function NavItemEditor({
   };
 
   return (
-    <Card variant="muted" padding="sm" className="rounded-lg space-y-3">
+    <Card variant="muted" padding="sm" rounded="lg" className="space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-gray-500 uppercase">
           Link {index + 1}
@@ -422,7 +422,7 @@ function NavItemEditor({
               ))}
             </Select>
           ) : (
-            <Card variant="muted" padding="sm" className="rounded-lg border-amber-200 bg-amber-50">
+            <Card variant="muted" padding="sm" rounded="lg" className="border-amber-200 bg-amber-50">
               <p className="text-xs text-amber-600">
                 No sections available. Add Hero, Features, or Footer sections first.
               </p>

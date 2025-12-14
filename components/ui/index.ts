@@ -23,7 +23,7 @@ export { Select, type SelectProps } from './select';
 export { Label, type LabelProps } from './label';
 
 // Layout
-export { Card, type CardProps, type CardVariant } from './card';
+export { Card, type CardProps, type CardVariant, type CardRounded } from './card';
 
 // Feedback
 export { EmptyState, type EmptyStateProps } from './empty-state';
