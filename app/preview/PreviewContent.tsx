@@ -9,6 +9,7 @@ import type {
   FeatureItem,
 } from '@/lib/sections';
 import { loadSectionsFromStorage } from '@/lib/storage';
+import { Button, EmptyState } from '@/components/ui';
 
 /** Section instance with computed anchor ID */
 type SectionWithAnchor = SectionInstance & { sectionId: string };
@@ -49,25 +50,29 @@ export function PreviewContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-pulse text-gray-500">Loading preview...</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#F17265] border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500 animate-pulse">Loading preview...</p>
+        </div>
       </div>
     );
   }
 
   if (sections.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-8">
-        <div className="text-6xl mb-4">📭</div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">No Content Yet</h1>
-        <p className="text-gray-600 text-center max-w-md">
-          Add some sections in the editor to see your website preview here.
-        </p>
-        <Link
-          href="/"
-          className="mt-6 px-6 py-3 bg-[#F17265] text-white rounded-full font-semibold hover:bg-[#E25C4F] transition-all"
-        >
-          Go to Editor
-        </Link>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <EmptyState
+          icon="📭"
+          title="No Content Yet"
+          description="Add some sections in the editor to see your website preview here."
+          action={
+            <Link href="/">
+              <Button variant="primary" size="lg" shape="pill">
+                Go to Editor
+              </Button>
+            </Link>
+          }
+        />
       </div>
     );
   }
@@ -126,9 +131,14 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
               </p>
             )}
             {buttonLabel && (
-              <button className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-[#F17265] text-white text-lg font-semibold hover:bg-[#E25C4F] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+              <Button
+                variant="primary"
+                size="lg"
+                shape="pill"
+                className="text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
                 {buttonLabel}
-              </button>
+              </Button>
             )}
           </div>
         </section>
