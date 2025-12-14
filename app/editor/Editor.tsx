@@ -309,7 +309,7 @@ export function Editor() {
         {/* Sidebar - hidden on mobile when preview tab is active */}
         <aside 
           className={`w-full md:w-1/3 lg:w-1/4 overflow-y-auto overscroll-contain scrollbar-styled bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm md:flex-shrink-0 min-h-0 ${
-            mobileTab === 'preview' ? 'hidden md:block' : 'block flex-1'
+            mobileTab === 'preview' ? 'hidden md:block' : 'block flex-1 md:flex-initial'
           }`}
         >
           <h2 className="text-xl font-bold mb-4 text-[#030014]">Section Library</h2>
