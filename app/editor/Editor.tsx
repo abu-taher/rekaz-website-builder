@@ -2,8 +2,15 @@
 
 import { useRef, useEffect, useState } from 'react';
 
-import { SECTION_LIBRARY, SectionInstance } from '@/lib/sections';
+import { SECTION_LIBRARY } from '@/lib/sections';
+import type { SectionInstance } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
+import {
+  loadSectionsFromStorage,
+  saveSectionsToStorage,
+  downloadAsJson,
+  parseImportData,
+} from '@/lib/storage';
 import { PropertyPanel } from './PropertyPanel';
 import {
   DndContext,
@@ -93,22 +100,7 @@ export function Editor() {
   };
 
   const handleExport = () => {
-    try {
-      const data = JSON.stringify(sections, null, 2);
-      const blob = new Blob([data], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'rekaz-layout.json';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export layout:', error);
-    }
+    downloadAsJson(sections);
   };
 
   const handleImportClick = () => {
@@ -121,32 +113,18 @@ export function Editor() {
 
     const reader = new FileReader();
     reader.onload = () => {
-      try {
-        const text = reader.result?.toString() ?? '';
-        const parsed = JSON.parse(text);
+      const text = reader.result?.toString() ?? '';
+      const validSections = parseImportData(text);
 
-        if (!Array.isArray(parsed)) {
-          console.warn('Invalid layout file: expected an array');
-          return;
-        }
-
-        // Very light validation: ensure each item has id, type, props
-        const validSections = parsed.filter(
-          (item) =>
-            item &&
-            typeof item.id === 'string' &&
-            typeof item.type === 'string' &&
-            'props' in item
-        );
-
+      if (validSections.length > 0) {
         replaceAll(validSections);
-      } catch (error) {
-        console.error('Failed to import layout:', error);
-      } finally {
-        // reset input value so we can re-upload same file if needed
-        if (event.target) {
-          event.target.value = '';
-        }
+      } else {
+        console.warn('No valid sections found in imported file');
+      }
+
+      // Reset input value so we can re-upload same file if needed
+      if (event.target) {
+        event.target.value = '';
       }
     };
 
@@ -161,42 +139,17 @@ export function Editor() {
     window.open('/preview', '_blank');
   };
 
+  // Load sections from localStorage on mount
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const raw = window.localStorage.getItem('rekaz-layout');
-      if (!raw) return;
-
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return;
-
-      const validSections = parsed.filter(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (item: any) =>
-          item &&
-          typeof item.id === 'string' &&
-          typeof item.type === 'string' &&
-          'props' in item
-      );
-
-      if (validSections.length > 0) {
-        replaceAll(validSections);
-      }
-    } catch (error) {
-      console.error('Failed to load layout from localStorage:', error);
+    const storedSections = loadSectionsFromStorage();
+    if (storedSections.length > 0) {
+      replaceAll(storedSections);
     }
   }, [replaceAll]);
 
+  // Save sections to localStorage whenever they change
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const data = JSON.stringify(sections);
-      window.localStorage.setItem('rekaz-layout', data);
-    } catch (error) {
-      console.error('Failed to save layout to localStorage:', error);
-    }
+    saveSectionsToStorage(sections);
   }, [sections]);
 
   return (
