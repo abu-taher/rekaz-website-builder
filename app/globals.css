@@ -184,6 +184,16 @@ button:active:not(:disabled) {
     overflow: hidden;
     touch-action: none;
   }
+  
+  /* Smooth momentum scrolling on iOS */
+  .scrollbar-styled {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent body scroll when scrolling panels */
+  html, body {
+    overscroll-behavior: none;
+  }
 }
 
 /* Drag handle active state for touch feedback */

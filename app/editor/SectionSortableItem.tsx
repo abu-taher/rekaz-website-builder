@@ -10,6 +10,7 @@ import { Button, Badge } from '@/components/ui';
 
 type Props = {
   section: SectionInstance;
+  onSelect?: () => void;
 };
 
 /**
@@ -23,6 +24,9 @@ function arePropsEqual(prevProps: Props, nextProps: Props): boolean {
   // Compare type
   if (prevProps.section.type !== nextProps.section.type) return false;
   
+  // Compare onSelect callback reference to avoid stale closures
+  if (prevProps.onSelect !== nextProps.onSelect) return false;
+  
   // Deep compare props and styles via JSON (safe for our simple data)
   const prevJson = JSON.stringify({ props: prevProps.section.props, styles: prevProps.section.styles });
   const nextJson = JSON.stringify({ props: nextProps.section.props, styles: nextProps.section.styles });
@@ -32,6 +36,7 @@ function arePropsEqual(prevProps: Props, nextProps: Props): boolean {
 
 export const SectionSortableItem = memo(function SectionSortableItem({
   section,
+  onSelect,
 }: Props) {
   const selectedSectionId = useLayoutStore((s) => s.selectedSectionId);
   const selectSection = useLayoutStore((s) => s.selectSection);
@@ -39,6 +44,11 @@ export const SectionSortableItem = memo(function SectionSortableItem({
   const isNewRef = useRef(true);
 
   const isSelected = section.id === selectedSectionId;
+
+  const handleSelect = () => {
+    selectSection(section.id);
+    onSelect?.();
+  };
 
   const {
     attributes,
@@ -66,13 +76,13 @@ export const SectionSortableItem = memo(function SectionSortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      onClick={() => selectSection(section.id)}
+      onClick={handleSelect}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          selectSection(section.id);
+          handleSelect();
         }
       }}
       className={[

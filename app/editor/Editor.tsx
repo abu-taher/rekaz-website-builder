@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 import { SECTION_LIBRARY } from '@/lib/sections';
 import type { SectionInstance } from '@/lib/sections';
@@ -32,6 +32,8 @@ import {
 import { SectionSortableItem } from './SectionSortableItem';
 import { SectionRenderer } from './SectionRenderer';
 
+type MobileTab = 'library' | 'preview';
+
 export function Editor() {
   const sections = useLayoutStore((state) => state.sections);
   const selectedSectionId = useLayoutStore((state) => state.selectedSectionId);
@@ -43,6 +45,7 @@ export function Editor() {
   const [activeSection, setActiveSection] = useState<SectionInstance | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const [mobileTab, setMobileTab] = useState<MobileTab>('library');
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -66,6 +69,11 @@ export function Editor() {
   const selectedSection = sections.find(
     (section) => section.id === selectedSectionId
   );
+
+  // Memoized callback for section selection to maintain stable reference
+  const handleSectionSelect = useCallback(() => {
+    setMobileTab('library');
+  }, []);
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -273,10 +281,42 @@ export function Editor() {
         </div>
       )}
 
+      {/* Mobile Tab Switcher - only visible on small screens */}
+      <div className="md:hidden flex gap-1 p-1 bg-gray-100 rounded-lg">
+        <button
+          type="button"
+          onClick={() => setMobileTab('library')}
+          className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold transition-all ${
+            mobileTab === 'library'
+              ? 'bg-white text-[#F17265] shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+          aria-pressed={mobileTab === 'library'}
+        >
+          📚 Library & Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab('preview')}
+          className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold transition-all ${
+            mobileTab === 'preview'
+              ? 'bg-white text-[#F17265] shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+          aria-pressed={mobileTab === 'preview'}
+        >
+          👁️ Preview {sections.length > 0 && `(${sections.length})`}
+        </button>
+      </div>
+
       {/* Main content: sidebar + preview */}
-      <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0 overflow-hidden">
-        {/* Sidebar - on mobile, limit height to allow preview to be visible */}
-        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto scrollbar-styled md:max-h-full max-h-[40vh] min-h-0 bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm flex-shrink-0">
+      <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0">
+        {/* Sidebar - hidden on mobile when preview tab is active */}
+        <aside 
+          className={`w-full md:w-1/3 lg:w-1/4 overflow-y-auto overscroll-contain scrollbar-styled bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm md:flex-shrink-0 min-h-0 ${
+            mobileTab === 'preview' ? 'hidden md:block' : 'block flex-1 md:flex-initial'
+          }`}
+        >
           <h2 className="text-xl font-bold mb-4 text-[#030014]">Section Library</h2>
 
           <div className="space-y-2 mb-6">
@@ -284,7 +324,10 @@ export function Editor() {
               <button
                 key={def.type}
                 type="button"
-                onClick={() => addSection(def.type)}
+                onClick={() => {
+                  addSection(def.type);
+                  // Stay on library tab to edit the new section's properties
+                }}
                 aria-label={`Add ${def.label} section`}
                 className="section-library-item w-full text-left border-2 border-gray-200 rounded-lg p-3 hover:border-[#F17265] hover:bg-[#FFF5F4] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 bg-white"
               >
@@ -300,9 +343,11 @@ export function Editor() {
           </div>
         </aside>
 
-        {/* Preview - takes remaining space, scrollable */}
+        {/* Preview - hidden on mobile when library tab is active */}
         <main 
-          className="flex-1 bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 overflow-y-auto scrollbar-styled min-h-0 shadow-sm"
+          className={`bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 overflow-y-auto overscroll-contain scrollbar-styled min-h-0 shadow-sm ${
+            mobileTab === 'library' ? 'hidden md:flex md:flex-col md:flex-1' : 'flex flex-col flex-1'
+          }`}
           role="main"
           aria-label="Preview area"
         >
@@ -331,7 +376,11 @@ export function Editor() {
               >
                 <div className="space-y-4">
                   {sections.map((section) => (
-                    <SectionSortableItem key={section.id} section={section} />
+                    <SectionSortableItem 
+                      key={section.id} 
+                      section={section}
+                      onSelect={handleSectionSelect}
+                    />
                   ))}
                 </div>
               </SortableContext>
