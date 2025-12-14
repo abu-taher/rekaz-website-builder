@@ -10,6 +10,7 @@ import { Button, Badge } from '@/components/ui';
 
 type Props = {
   section: SectionInstance;
+  onSelect?: () => void;
 };
 
 /**
@@ -32,6 +33,7 @@ function arePropsEqual(prevProps: Props, nextProps: Props): boolean {
 
 export const SectionSortableItem = memo(function SectionSortableItem({
   section,
+  onSelect,
 }: Props) {
   const selectedSectionId = useLayoutStore((s) => s.selectedSectionId);
   const selectSection = useLayoutStore((s) => s.selectSection);
@@ -39,6 +41,11 @@ export const SectionSortableItem = memo(function SectionSortableItem({
   const isNewRef = useRef(true);
 
   const isSelected = section.id === selectedSectionId;
+
+  const handleSelect = () => {
+    selectSection(section.id);
+    onSelect?.();
+  };
 
   const {
     attributes,
@@ -66,13 +73,13 @@ export const SectionSortableItem = memo(function SectionSortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      onClick={() => selectSection(section.id)}
+      onClick={handleSelect}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          selectSection(section.id);
+          handleSelect();
         }
       }}
       className={[
