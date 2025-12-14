@@ -20,6 +20,8 @@ const SECTION_DISPLAY_NAMES: Record<SectionType, string> = {
   header: 'Header',
   features: 'Features',
   footer: 'Footer',
+  cta: 'Call to Action',
+  testimonial: 'Testimonial',
 };
 
 /** Get a display-friendly name for a section, with index suffix for duplicates */
@@ -302,6 +304,86 @@ export const PropertyPanel = memo(function PropertyPanel({
               value={text}
               onChange={handleChange('text')}
               rows={3}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    case 'cta': {
+      const { heading, description, buttonLabel } = section.props;
+      return (
+        <div className="space-y-4">
+          <h3 className="text-base font-bold text-[#030014]">CTA Settings</h3>
+
+          <div className="space-y-2">
+            <Label htmlFor="cta-heading">Heading</Label>
+            <Input
+              id="cta-heading"
+              type="text"
+              value={heading}
+              onChange={handleChange('heading')}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cta-description">Description</Label>
+            <Textarea
+              id="cta-description"
+              value={description ?? ''}
+              onChange={handleChange('description')}
+              rows={2}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cta-button">Button Label</Label>
+            <Input
+              id="cta-button"
+              type="text"
+              value={buttonLabel}
+              onChange={handleChange('buttonLabel')}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    case 'testimonial': {
+      const { quote, authorName, authorTitle } = section.props;
+      return (
+        <div className="space-y-4">
+          <h3 className="text-base font-bold text-[#030014]">Testimonial Settings</h3>
+
+          <div className="space-y-2">
+            <Label htmlFor="testimonial-quote">Quote</Label>
+            <Textarea
+              id="testimonial-quote"
+              value={quote}
+              onChange={handleChange('quote')}
+              rows={4}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="testimonial-author">Author Name</Label>
+            <Input
+              id="testimonial-author"
+              type="text"
+              value={authorName}
+              onChange={handleChange('authorName')}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="testimonial-title" hint="e.g., CEO at Company">
+              Author Title
+            </Label>
+            <Input
+              id="testimonial-title"
+              type="text"
+              value={authorTitle ?? ''}
+              onChange={handleChange('authorTitle')}
             />
           </div>
         </div>

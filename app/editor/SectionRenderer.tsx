@@ -107,5 +107,54 @@ export const SectionRenderer = memo(function SectionRenderer({
         </footer>
       );
     }
+
+    case 'cta': {
+      const { heading, description, buttonLabel } = section.props;
+      return (
+        <section className="py-12 md:py-16 text-center bg-gradient-to-r from-[#F17265] to-[#E25C4F] rounded-xl shadow-lg">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white px-6">
+            {heading}
+          </h3>
+          {description && (
+            <p className="text-white/90 text-sm md:text-base mb-6 max-w-xl mx-auto px-6">
+              {description}
+            </p>
+          )}
+          <Button
+            variant="outline"
+            size="lg"
+            shape="pill"
+            className="bg-white text-[#F17265] border-white hover:bg-gray-100 hover:border-gray-100"
+          >
+            {buttonLabel}
+          </Button>
+        </section>
+      );
+    }
+
+    case 'testimonial': {
+      const { quote, authorName, authorTitle } = section.props;
+      return (
+        <section className="py-10 md:py-12">
+          <Card variant="default" padding="lg" className="max-w-2xl mx-auto text-center">
+            <div className="text-4xl text-[#F17265] mb-4">&ldquo;</div>
+            <blockquote className="text-lg md:text-xl text-gray-700 italic mb-6 leading-relaxed">
+              {quote}
+            </blockquote>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#F17265] to-[#E25C4F] rounded-full flex items-center justify-center text-white font-bold text-lg mb-3">
+                {authorName.charAt(0).toUpperCase()}
+              </div>
+              <cite className="not-italic">
+                <div className="font-semibold text-[#030014]">{authorName}</div>
+                {authorTitle && (
+                  <div className="text-sm text-gray-500">{authorTitle}</div>
+                )}
+              </cite>
+            </div>
+          </Card>
+        </section>
+      );
+    }
   }
 });

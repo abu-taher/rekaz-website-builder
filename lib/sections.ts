@@ -2,7 +2,7 @@
 // Section Type Definitions
 // =============================================================================
 
-export type SectionType = 'hero' | 'header' | 'features' | 'footer';
+export type SectionType = 'hero' | 'header' | 'features' | 'footer' | 'cta' | 'testimonial';
 
 // -----------------------------------------------------------------------------
 // Props for each section type
@@ -39,6 +39,18 @@ export type FooterProps = {
   text: string;
 };
 
+export type CtaProps = {
+  heading: string;
+  description?: string;
+  buttonLabel: string;
+};
+
+export type TestimonialProps = {
+  quote: string;
+  authorName: string;
+  authorTitle?: string;
+};
+
 // -----------------------------------------------------------------------------
 // Discriminated Union for Section Instances
 // This provides type-safe access to props based on section type
@@ -68,15 +80,29 @@ export type FooterSection = {
   props: FooterProps;
 };
 
+export type CtaSection = {
+  id: string;
+  type: 'cta';
+  props: CtaProps;
+};
+
+export type TestimonialSection = {
+  id: string;
+  type: 'testimonial';
+  props: TestimonialProps;
+};
+
 /** Discriminated union of all section types */
 export type SectionInstance =
   | HeroSection
   | HeaderSection
   | FeaturesSection
-  | FooterSection;
+  | FooterSection
+  | CtaSection
+  | TestimonialSection;
 
 /** Union of all possible props (for generic handlers) */
-export type SectionProps = HeroProps | HeaderProps | FeaturesProps | FooterProps;
+export type SectionProps = HeroProps | HeaderProps | FeaturesProps | FooterProps | CtaProps | TestimonialProps;
 
 // -----------------------------------------------------------------------------
 // Section Definition (for the library sidebar)
@@ -94,6 +120,10 @@ export type SectionDefinition<T extends SectionType = SectionType> = {
     ? FeaturesProps
     : T extends 'footer'
     ? FooterProps
+    : T extends 'cta'
+    ? CtaProps
+    : T extends 'testimonial'
+    ? TestimonialProps
     : never;
 };
 
@@ -152,11 +182,35 @@ const footerDefinition: SectionDefinition<'footer'> = {
   },
 };
 
+const ctaDefinition: SectionDefinition<'cta'> = {
+  type: 'cta',
+  label: 'Call to Action',
+  description: 'Focused section with heading and action button.',
+  defaultProps: {
+    heading: 'Ready to get started?',
+    description: 'Join thousands of users building amazing websites today.',
+    buttonLabel: 'Get Started Free',
+  },
+};
+
+const testimonialDefinition: SectionDefinition<'testimonial'> = {
+  type: 'testimonial',
+  label: 'Testimonial',
+  description: 'Customer quote with author attribution.',
+  defaultProps: {
+    quote: 'This builder transformed our workflow. We shipped our landing page in hours instead of weeks.',
+    authorName: 'Sarah Chen',
+    authorTitle: 'Product Manager at TechCorp',
+  },
+};
+
 /** All available section definitions for the library sidebar */
 export const SECTION_LIBRARY: SectionDefinition[] = [
   headerDefinition,
   heroDefinition,
   featuresDefinition,
+  ctaDefinition,
+  testimonialDefinition,
   footerDefinition,
 ];
 
@@ -178,6 +232,14 @@ export function isFeaturesSection(section: SectionInstance): section is Features
 
 export function isFooterSection(section: SectionInstance): section is FooterSection {
   return section.type === 'footer';
+}
+
+export function isCtaSection(section: SectionInstance): section is CtaSection {
+  return section.type === 'cta';
+}
+
+export function isTestimonialSection(section: SectionInstance): section is TestimonialSection {
+  return section.type === 'testimonial';
 }
 
 // -----------------------------------------------------------------------------

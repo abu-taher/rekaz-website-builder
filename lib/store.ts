@@ -9,6 +9,8 @@ import {
   HeaderProps,
   FeaturesProps,
   FooterProps,
+  CtaProps,
+  TestimonialProps,
 } from './sections';
 
 // =============================================================================
@@ -61,6 +63,10 @@ function createSectionInstance(type: SectionType): SectionInstance | null {
       return { id, type: 'features', props: props as FeaturesProps };
     case 'footer':
       return { id, type: 'footer', props: props as FooterProps };
+    case 'cta':
+      return { id, type: 'cta', props: props as CtaProps };
+    case 'testimonial':
+      return { id, type: 'testimonial', props: props as TestimonialProps };
     default:
       return null;
   }

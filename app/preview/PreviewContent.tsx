@@ -196,6 +196,65 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
         </footer>
       );
     }
+
+    case 'cta': {
+      const { heading, description, buttonLabel } = section.props;
+      return (
+        <section
+          id={sectionId}
+          className="py-16 md:py-24 scroll-mt-16 md:scroll-mt-20"
+        >
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="text-center py-16 px-8 bg-gradient-to-r from-[#F17265] to-[#E25C4F] rounded-3xl shadow-xl">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+                {heading}
+              </h2>
+              {description && (
+                <p className="text-white/90 text-lg md:text-xl mb-8 max-w-xl mx-auto">
+                  {description}
+                </p>
+              )}
+              <Button
+                variant="outline"
+                size="lg"
+                shape="pill"
+                className="bg-white text-[#F17265] border-white hover:bg-gray-100 hover:border-gray-100 text-lg shadow-lg"
+              >
+                {buttonLabel}
+              </Button>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    case 'testimonial': {
+      const { quote, authorName, authorTitle } = section.props;
+      return (
+        <section
+          id={sectionId}
+          className="py-16 md:py-24 bg-gray-50 scroll-mt-16 md:scroll-mt-20"
+        >
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <div className="text-6xl text-[#F17265] mb-6">&ldquo;</div>
+            <blockquote className="text-xl md:text-2xl text-gray-700 italic mb-8 leading-relaxed">
+              {quote}
+            </blockquote>
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#F17265] to-[#E25C4F] rounded-full flex items-center justify-center text-white font-bold text-2xl mb-4 shadow-lg">
+                {authorName.charAt(0).toUpperCase()}
+              </div>
+              <cite className="not-italic">
+                <div className="font-semibold text-lg text-[#030014]">{authorName}</div>
+                {authorTitle && (
+                  <div className="text-gray-500">{authorTitle}</div>
+                )}
+              </cite>
+            </div>
+          </div>
+        </section>
+      );
+    }
   }
 }
 
