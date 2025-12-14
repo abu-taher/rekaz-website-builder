@@ -41,6 +41,8 @@ export function Editor() {
   const replaceAll = useLayoutStore((state) => state.replaceAll);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [activeSection, setActiveSection] = useState<SectionInstance | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importSuccess, setImportSuccess] = useState<string | null>(null);
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -112,21 +114,45 @@ export function Editor() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Clear previous messages
+    setImportError(null);
+    setImportSuccess(null);
+
     const reader = new FileReader();
     reader.onload = () => {
       const text = reader.result?.toString() ?? '';
+      
+      // Check if it's valid JSON first
+      try {
+        JSON.parse(text);
+      } catch {
+        setImportError('Invalid JSON file. Please select a valid JSON file exported from this builder.');
+        if (event.target) event.target.value = '';
+        return;
+      }
+
       const validSections = parseImportData(text);
 
       if (validSections.length > 0) {
         replaceAll(validSections);
+        setImportSuccess(`Successfully imported ${validSections.length} section${validSections.length > 1 ? 's' : ''}.`);
+        // Auto-hide success message after 3 seconds
+        setTimeout(() => setImportSuccess(null), 3000);
       } else {
-        console.warn('No valid sections found in imported file');
+        setImportError(
+          'No valid sections found in the file. Each section must have: id, type (hero, header, features, footer, cta, or testimonial), props, and styles.'
+        );
       }
 
       // Reset input value so we can re-upload same file if needed
       if (event.target) {
         event.target.value = '';
       }
+    };
+
+    reader.onerror = () => {
+      setImportError('Failed to read file. Please try again.');
+      if (event.target) event.target.value = '';
     };
 
     reader.readAsText(file);
@@ -154,7 +180,7 @@ export function Editor() {
   }, [sections]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] gap-4">
+    <div className="flex flex-col h-[calc(100dvh-4rem)] gap-4">
       {/* Toolbar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-2 pb-3 border-b-2 border-gray-200">
         <div className="text-sm text-gray-600 font-medium">
@@ -216,10 +242,41 @@ export function Editor() {
         </div>
       </div>
 
+      {/* Import feedback messages */}
+      {importError && (
+        <div 
+          role="alert"
+          className="flex items-center justify-between gap-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg text-red-700 text-sm animate-fade-slide-in"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg">⚠️</span>
+            <span>{importError}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setImportError(null)}
+            className="text-red-500 hover:text-red-700 font-bold text-lg leading-none"
+            aria-label="Dismiss error"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {importSuccess && (
+        <div 
+          role="status"
+          className="flex items-center gap-2 p-3 bg-green-50 border-2 border-green-200 rounded-lg text-green-700 text-sm animate-fade-slide-in"
+        >
+          <span className="text-lg">✅</span>
+          <span>{importSuccess}</span>
+        </div>
+      )}
+
       {/* Main content: sidebar + preview */}
-      <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0">
-        {/* Sidebar */}
-        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto scrollbar-styled max-h-full min-h-[50vh] bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm">
+      <div className="flex flex-col md:flex-row flex-1 gap-4 min-h-0 overflow-hidden">
+        {/* Sidebar - on mobile, limit height to allow preview to be visible */}
+        <aside className="w-full md:w-1/3 lg:w-1/4 overflow-y-auto scrollbar-styled md:max-h-full max-h-[40vh] min-h-0 bg-white rounded-xl border-2 border-gray-200 p-4 shadow-sm flex-shrink-0">
           <h2 className="text-xl font-bold mb-4 text-[#030014]">Section Library</h2>
 
           <div className="space-y-2 mb-6">
@@ -243,9 +300,9 @@ export function Editor() {
           </div>
         </aside>
 
-        {/* Preview */}
+        {/* Preview - takes remaining space, scrollable */}
         <main 
-          className="flex-1 bg-white border-2 border-gray-200 rounded-xl p-6 overflow-y-auto scrollbar-styled max-h-full min-h-[50vh] shadow-sm"
+          className="flex-1 bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 overflow-y-auto scrollbar-styled min-h-0 shadow-sm"
           role="main"
           aria-label="Preview area"
         >

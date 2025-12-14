@@ -108,7 +108,7 @@ export function parseImportData(jsonString: string): SectionInstance[] {
     if (sections.length === 0 && parsed.length > 0) {
       console.warn(
         'Import data contained items but none matched the expected schema. ' +
-          'Each section must have: id (string), type (hero|header|features|footer), and props.'
+          'Each section must have: id (string), type (hero|header|features|footer|cta|testimonial), props, and styles.'
       );
     }
 

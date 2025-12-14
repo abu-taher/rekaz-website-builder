@@ -9,6 +9,7 @@ import {
   exportToJson,
 } from '../storage';
 import type { SectionInstance } from '../sections';
+import { DEFAULT_SECTION_STYLES } from '../sections';
 
 // Mock localStorage
 const localStorageMock = {
@@ -23,6 +24,15 @@ Object.defineProperty(window, 'localStorage', {
   writable: true,
 });
 
+// Helper to create valid section with styles
+const createValidSection = (overrides = {}): Record<string, unknown> => ({
+  id: '1',
+  type: 'hero',
+  props: { title: 'Test' },
+  styles: { ...DEFAULT_SECTION_STYLES },
+  ...overrides,
+});
+
 describe('STORAGE_KEY', () => {
   it('should be defined', () => {
     expect(STORAGE_KEY).toBe('rekaz-layout');
@@ -31,7 +41,7 @@ describe('STORAGE_KEY', () => {
 
 describe('isValidSectionShape', () => {
   it('should return true for valid section shape', () => {
-    const valid = { id: '1', type: 'hero', props: { title: 'Test' } };
+    const valid = createValidSection();
     expect(isValidSectionShape(valid)).toBe(true);
   });
 
@@ -45,23 +55,23 @@ describe('isValidSectionShape', () => {
   });
 
   it('should return false for missing id', () => {
-    expect(isValidSectionShape({ type: 'hero', props: {} })).toBe(false);
+    expect(isValidSectionShape({ type: 'hero', props: {}, styles: {} })).toBe(false);
   });
 
   it('should return false for non-string id', () => {
-    expect(isValidSectionShape({ id: 123, type: 'hero', props: {} })).toBe(false);
+    expect(isValidSectionShape({ id: 123, type: 'hero', props: {}, styles: {} })).toBe(false);
   });
 
   it('should return false for missing type', () => {
-    expect(isValidSectionShape({ id: '1', props: {} })).toBe(false);
+    expect(isValidSectionShape({ id: '1', props: {}, styles: {} })).toBe(false);
   });
 
   it('should return false for missing props', () => {
-    expect(isValidSectionShape({ id: '1', type: 'hero' })).toBe(false);
+    expect(isValidSectionShape({ id: '1', type: 'hero', styles: {} })).toBe(false);
   });
 
   it('should return false for null props', () => {
-    expect(isValidSectionShape({ id: '1', type: 'hero', props: null })).toBe(false);
+    expect(isValidSectionShape({ id: '1', type: 'hero', props: null, styles: {} })).toBe(false);
   });
 });
 
@@ -74,9 +84,9 @@ describe('validateSections', () => {
 
   it('should filter out invalid sections', () => {
     const input = [
-      { id: '1', type: 'hero', props: { title: 'Test' } },
+      createValidSection({ id: '1' }),
       { invalid: true },
-      { id: '2', type: 'footer', props: { text: 'Footer' } },
+      createValidSection({ id: '2', type: 'footer', props: { text: 'Footer' } }),
       null,
     ];
 
@@ -98,7 +108,7 @@ describe('loadSectionsFromStorage', () => {
   });
 
   it('should return parsed sections from localStorage', () => {
-    const sections = [{ id: '1', type: 'hero', props: { title: 'Test' } }];
+    const sections = [createValidSection()];
     localStorageMock.getItem.mockReturnValue(JSON.stringify(sections));
 
     const result = loadSectionsFromStorage();
@@ -119,7 +129,7 @@ describe('saveSectionsToStorage', () => {
 
   it('should save sections to localStorage', () => {
     const sections: SectionInstance[] = [
-      { id: '1', type: 'hero', props: { title: 'Test' } },
+      { id: '1', type: 'hero', props: { title: 'Test' }, styles: { ...DEFAULT_SECTION_STYLES } },
     ];
 
     saveSectionsToStorage(sections);
@@ -133,7 +143,7 @@ describe('saveSectionsToStorage', () => {
 
 describe('parseImportData', () => {
   it('should parse valid JSON', () => {
-    const json = JSON.stringify([{ id: '1', type: 'hero', props: { title: 'Test' } }]);
+    const json = JSON.stringify([createValidSection()]);
     const result = parseImportData(json);
     expect(result).toHaveLength(1);
   });
@@ -144,7 +154,7 @@ describe('parseImportData', () => {
 
   it('should filter invalid sections', () => {
     const json = JSON.stringify([
-      { id: '1', type: 'hero', props: { title: 'Test' } },
+      createValidSection({ id: '1' }),
       { invalid: true },
     ]);
     const result = parseImportData(json);
@@ -155,7 +165,7 @@ describe('parseImportData', () => {
 describe('exportToJson', () => {
   it('should export sections as formatted JSON', () => {
     const sections: SectionInstance[] = [
-      { id: '1', type: 'hero', props: { title: 'Test' } },
+      { id: '1', type: 'hero', props: { title: 'Test' }, styles: { ...DEFAULT_SECTION_STYLES } },
     ];
 
     const json = exportToJson(sections);

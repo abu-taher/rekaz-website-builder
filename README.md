@@ -15,36 +15,39 @@
 
 ---
 
-## 📋 Assignment Requirements
+## 📋 Assignment Requirements Checklist
 
-| Requirement | Status | Implementation |
-|-------------|:------:|----------------|
-| Section Library (Click-to-Add) | ✅ | Pre-made sections: Hero, Header, Features, Footer |
-| Live Preview Area | ✅ | Real-time preview + dedicated fullscreen preview page |
-| Import/Export JSON | ✅ | Download/upload configuration files |
-| Editable Sections | ✅ | Property panel with inline editing |
-| Delete Sections | ✅ | One-click removal with confirmation |
-| Drag & Drop Reorder | ✅ | Smooth reordering with @dnd-kit |
-| Fully Responsive | ✅ | Mobile-first design with adaptive layouts |
-| Performance Optimized | ✅ | Zero unnecessary re-renders (see details below) |
-| Subtle Animations | ✅ | CSS transitions & keyframe animations |
-| SSR Friendly | ✅ | Client components pushed down the tree |
+| Req | Requirement | Status | Implementation |
+|-----|-------------|:------:|----------------|
+| A | Section Library (Click-to-Add) | ✅ | 6 pre-made sections: Hero, Header, Features, Footer, CTA, Testimonial |
+| B | Live Preview Area | ✅ | Real-time inline preview + fullscreen preview page (`/preview`) |
+| C | Import/Export JSON | ✅ | Download/upload with Zod validation + user feedback on errors |
+| D | Editable Sections | ✅ | Property panel with inline editing, delete, style customization |
+| E | Drag & Drop Reorder | ✅ | @dnd-kit with touch support (150ms hold to drag) |
+| F | Fully Responsive | ✅ | Mobile-first design, iOS viewport fix (`100dvh`), no scroll traps |
+| G | Performance Optimized | ✅ | Zustand selectors, memoization with custom comparators |
+| H | Subtle Animations | ✅ | CSS transitions, fade/scale animations, drag feedback |
+| I | SSR Friendly | ✅ | Server Components at top, client pushed to leaves |
+| J | Deployment | ✅ | Deployed on Vercel (see Deploy section) |
+| K | Contributing Guide | ✅ | Comprehensive `CONTRIBUTING.md` |
 
 ---
 
 ## 🎯 Key Features
 
 ### Core Functionality
-- **Section Library** — Click to add pre-built sections (Hero, Header, Features, Footer)
-- **Live Preview** — See changes instantly as you edit
-- **Drag & Drop** — Intuitive section reordering with visual feedback
-- **Property Editor** — Edit titles, descriptions, images, and more
+- **Section Library** — Click to add 6 section types (Hero, Header, Features, Footer, CTA, Testimonial)
+- **Live Preview** — See changes instantly as you edit, plus fullscreen preview
+- **Drag & Drop** — Intuitive section reordering with visual feedback (touch + mouse)
+- **Property Editor** — Edit titles, descriptions, images, navigation items, and more
+- **Style Customization** — Background color, text color, and padding per section
 - **Persistence** — Auto-save to localStorage + JSON import/export
 
 ### Technical Highlights
-- **Zero Unnecessary Re-renders** — Selective Zustand subscriptions ensure components only update when their specific data changes
+- **Zero Unnecessary Re-renders** — Selective Zustand subscriptions + custom memo comparators
 - **SSR Architecture** — Server components at the top, client components pushed to leaves
-- **Optimized Memoization** — Custom comparison functions prevent wasteful renders
+- **Mobile-First** — iOS-safe viewport units, touch DnD, 44px touch targets
+- **Validated Import** — Zod schemas validate imported JSON with user-friendly error messages
 - **Smooth Animations** — GPU-accelerated CSS animations for 60fps transitions
 
 ---
@@ -53,12 +56,14 @@
 
 | Category | Technology | Why? |
 |----------|------------|------|
-| **Framework** | Next.js 16 (App Router) | SSR support, file-based routing, React Server Components |
+| **Framework** | Next.js 16 (App Router) | SSR, file-based routing, React Server Components |
 | **UI Library** | React 19 | Latest concurrent features, improved performance |
-| **Language** | TypeScript 5 | Type safety, better DX, fewer runtime errors |
-| **Styling** | Tailwind CSS 4 | Utility-first, zero runtime CSS, tree-shakeable |
-| **State** | Zustand | Lightweight, selective subscriptions, no boilerplate |
-| **Drag & Drop** | @dnd-kit | Accessible, performant, framework-agnostic |
+| **Language** | TypeScript 5 | Type safety, discriminated unions, better DX |
+| **Styling** | Tailwind CSS 4 | Utility-first, zero runtime CSS |
+| **State** | Zustand | Lightweight, selective subscriptions |
+| **Drag & Drop** | @dnd-kit | Accessible, touch support, framework-agnostic |
+| **Validation** | Zod | Runtime schema validation for import/export |
+| **Testing** | Vitest + RTL | Fast unit tests |
 
 ---
 
@@ -70,40 +75,52 @@ rekaz-website-builder/
 │   ├── page.tsx                    # Server Component (entry point)
 │   ├── layout.tsx                  # Server Component (metadata, fonts)
 │   ├── globals.css                 # Global styles + animations
+│   ├── error.tsx                   # Error boundary
+│   ├── loading.tsx                 # Loading state
+│   ├── not-found.tsx               # 404 page
 │   ├── editor/                     # Client Components (pushed down)
 │   │   ├── Editor.tsx              # Main editor orchestrator
-│   │   ├── PropertyPanel.tsx       # Section property forms
+│   │   ├── PropertyPanel.tsx       # Section property forms + styles
 │   │   ├── SectionRenderer.tsx     # Memoized section previews
-│   │   └── SectionSortableItem.tsx # Drag-and-drop wrapper
+│   │   └── SectionSortableItem.tsx # DnD wrapper with custom comparator
 │   └── preview/
-│       ├── page.tsx                # Server Component (preview route)
+│       ├── page.tsx                # Server Component
 │       └── PreviewContent.tsx      # Client Component (live preview)
-└── lib/
-    ├── store.ts                    # Zustand store with selectors
-    └── sections.ts                 # Type definitions & defaults
+├── components/ui/                  # Reusable UI primitives
+├── lib/
+│   ├── store.ts                    # Zustand store with selectors
+│   ├── sections.ts                 # Type definitions, defaults, styles
+│   ├── schemas.ts                  # Zod validation schemas
+│   └── storage.ts                  # LocalStorage + import/export
+└── CONTRIBUTING.md                 # Developer guide
 ```
 
 ### Design Decisions
 
 **1. SSR-First Architecture**
 - Root `page.tsx` and `layout.tsx` are Server Components
-- Client interactivity (`"use client"`) only where necessary
-- Faster initial page load, better SEO potential
+- Client interactivity (`"use client"`) only where necessary (Editor, Preview)
+- Faster initial page load, better SEO
 
 **2. Performance-Optimized State Management**
 ```typescript
-// ❌ Bad: Component re-renders on ANY store change
-const { sections, addSection } = useStore();
+// ✅ Good: Selective subscription - only re-renders when sections change
+const sections = useLayoutStore((state) => state.sections);
 
-// ✅ Good: Component only re-renders when sections change
-const sections = useStore((state) => state.sections);
-const addSection = useStore((state) => state.addSection);
+// ❌ Bad: Subscribes to entire store - re-renders on any change
+const { sections, addSection } = useLayoutStore();
 ```
 
 **3. Memoization Strategy**
 - `React.memo` with custom comparators on section components
+- Compares section ID + serialized content (props + styles)
 - Editing one section doesn't re-render others
-- Drag operations don't trigger content re-renders
+
+**4. Mobile UX Approach**
+- Uses `100dvh` instead of `100vh` for iOS Safari compatibility
+- Single primary scroll area on mobile (avoids scroll traps)
+- 44px minimum touch targets
+- Touch DnD with 150ms hold delay to prevent accidental drags
 
 ---
 
@@ -127,10 +144,44 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server with hot reload |
+| `npm run dev` | Start development server |
 | `npm run build` | Create optimized production build |
 | `npm run start` | Run production server |
-| `npm run lint` | Run ESLint for code quality |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Run ESLint with auto-fix |
+| `npm run format` | Format with Prettier |
+| `npm run test` | Run tests in watch mode |
+| `npm run test:run` | Run tests once |
+| `npm run typecheck` | TypeScript type checking |
+
+---
+
+## 🚢 Deploy to Vercel
+
+### Option 1: One-Click Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/abu-taher/rekaz-website-builder)
+
+### Option 2: Manual Deploy
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com) and sign in
+3. Click "New Project" → Import your repository
+4. Vercel auto-detects Next.js — just click "Deploy"
+5. Your site will be live at `your-project.vercel.app`
+
+### Option 3: Vercel CLI
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy (follow prompts)
+vercel
+
+# Deploy to production
+vercel --prod
+```
 
 ---
 
@@ -140,37 +191,51 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 1. **Add Sections** — Click any section type from the library sidebar
 2. **Edit Content** — Select a section to reveal the property editor
-3. **Reorder** — Drag sections using the handle (⠿) to rearrange
-4. **Preview** — Click "Open Preview" for a fullscreen view
-5. **Save** — Export your layout as JSON to save your work
+3. **Style Sections** — Customize background color, text color, and padding
+4. **Reorder** — Drag sections using the handle (⠿) to rearrange
+5. **Preview** — Click "Live Preview" for a fullscreen view
+6. **Save** — Export your layout as JSON to save your work
 
-### Editable Properties
+### Available Sections
 
-| Section | Properties |
-|---------|-----------|
-| **Header** | Logo text, navigation items |
+| Section | Editable Properties |
+|---------|---------------------|
+| **Header** | Logo text, navigation items (label + link) |
 | **Hero** | Title, subtitle, button label, background image URL |
-| **Features** | Section heading, feature items (add/remove dynamically) |
-| **Footer** | Footer text content |
+| **Features** | Heading, feature items (title + description) |
+| **CTA** | Heading, description, button label |
+| **Testimonial** | Quote, author name, author title |
+| **Footer** | Footer text |
+
+All sections support style customization: background color, text color, vertical padding.
 
 ---
 
 ## 📁 Import/Export
 
-The builder supports JSON-based persistence:
-
-- **Export** — Downloads your current layout as a `.json` file
+- **Export** — Downloads your layout as a `.json` file
 - **Import** — Load any previously exported layout
 - **Auto-Save** — Changes persist to localStorage automatically
+- **Validation** — Invalid JSON shows user-friendly error message
 
 ---
 
-## 🎨 UI/UX Details
+## ⚠️ Known Limitations
 
-- **Light Theme** — Clean, professional interface
-- **Responsive Layout** — Works on desktop, tablet, and mobile
-- **Visual Feedback** — Hover states, active indicators, drag previews
-- **Smooth Transitions** — Subtle animations enhance the experience
+- **No undo/redo** — Changes are immediate; use export to save checkpoints
+- **No nested sections** — Flat section list only
+- **Image URLs only** — No image upload; paste external URLs
+- **localStorage only** — No cloud sync; export to backup
+
+---
+
+## 🔮 Future Improvements
+
+- [ ] Undo/redo history
+- [ ] More section types (Gallery, Pricing, Contact Form)
+- [ ] Cloud storage integration
+- [ ] Collaborative editing
+- [ ] Export to HTML/CSS
 
 ---
 
