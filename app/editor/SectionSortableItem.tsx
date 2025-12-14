@@ -12,6 +12,24 @@ type Props = {
   section: SectionInstance;
 };
 
+/**
+ * Custom comparator for memo - only re-render if section content actually changed.
+ * Compares by ID first (fast path), then by serialized content.
+ */
+function arePropsEqual(prevProps: Props, nextProps: Props): boolean {
+  // Fast path: different IDs means definitely re-render
+  if (prevProps.section.id !== nextProps.section.id) return false;
+  
+  // Compare type
+  if (prevProps.section.type !== nextProps.section.type) return false;
+  
+  // Deep compare props and styles via JSON (safe for our simple data)
+  const prevJson = JSON.stringify({ props: prevProps.section.props, styles: prevProps.section.styles });
+  const nextJson = JSON.stringify({ props: nextProps.section.props, styles: nextProps.section.styles });
+  
+  return prevJson === nextJson;
+}
+
 export const SectionSortableItem = memo(function SectionSortableItem({
   section,
 }: Props) {
@@ -110,4 +128,4 @@ export const SectionSortableItem = memo(function SectionSortableItem({
       <SectionRenderer section={section} />
     </div>
   );
-});
+}, arePropsEqual);
