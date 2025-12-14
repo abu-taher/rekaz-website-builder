@@ -286,26 +286,33 @@ export function Editor() {
         <button
           type="button"
           onClick={() => setMobileTab('library')}
-          className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold transition-all ${
+          className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
             mobileTab === 'library'
               ? 'bg-white text-[#F17265] shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
           }`}
           aria-pressed={mobileTab === 'library'}
         >
-          📚 Library & Edit
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          Library & Edit
         </button>
         <button
           type="button"
           onClick={() => setMobileTab('preview')}
-          className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold transition-all ${
+          className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
             mobileTab === 'preview'
               ? 'bg-white text-[#F17265] shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
           }`}
           aria-pressed={mobileTab === 'preview'}
         >
-          👁️ Preview {sections.length > 0 && `(${sections.length})`}
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Preview {sections.length > 0 && `(${sections.length})`}
         </button>
       </div>
 
