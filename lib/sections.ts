@@ -199,8 +199,8 @@ const testimonialDefinition: SectionDefinition<'testimonial'> = {
   description: 'Customer quote with author attribution.',
   defaultProps: {
     quote: 'This builder transformed our workflow. We shipped our landing page in hours instead of weeks.',
-    authorName: 'Sarah Chen',
-    authorTitle: 'Product Manager at TechCorp',
+    authorName: 'Ahmed Taher',
+    authorTitle: 'Product Engineer at TechCorp',
   },
 };
 
