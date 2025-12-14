@@ -5,6 +5,37 @@
 export type SectionType = 'hero' | 'header' | 'features' | 'footer' | 'cta' | 'testimonial';
 
 // -----------------------------------------------------------------------------
+// Common Section Styles (shared across all section types)
+// -----------------------------------------------------------------------------
+
+export type PaddingSize = 'none' | 'sm' | 'md' | 'lg' | 'xl';
+
+export type SectionStyles = {
+  /** Background color (CSS color value) */
+  backgroundColor?: string;
+  /** Text color (CSS color value) */
+  textColor?: string;
+  /** Vertical padding size */
+  paddingY?: PaddingSize;
+};
+
+/** Default styles for sections */
+export const DEFAULT_SECTION_STYLES: SectionStyles = {
+  backgroundColor: '',
+  textColor: '',
+  paddingY: 'md',
+};
+
+/** Padding size to Tailwind class mapping */
+export const PADDING_Y_CLASSES: Record<PaddingSize, string> = {
+  none: 'py-0',
+  sm: 'py-4 md:py-6',
+  md: 'py-8 md:py-12',
+  lg: 'py-12 md:py-16',
+  xl: 'py-16 md:py-24',
+};
+
+// -----------------------------------------------------------------------------
 // Props for each section type
 // -----------------------------------------------------------------------------
 
@@ -60,36 +91,42 @@ export type HeroSection = {
   id: string;
   type: 'hero';
   props: HeroProps;
+  styles: SectionStyles;
 };
 
 export type HeaderSection = {
   id: string;
   type: 'header';
   props: HeaderProps;
+  styles: SectionStyles;
 };
 
 export type FeaturesSection = {
   id: string;
   type: 'features';
   props: FeaturesProps;
+  styles: SectionStyles;
 };
 
 export type FooterSection = {
   id: string;
   type: 'footer';
   props: FooterProps;
+  styles: SectionStyles;
 };
 
 export type CtaSection = {
   id: string;
   type: 'cta';
   props: CtaProps;
+  styles: SectionStyles;
 };
 
 export type TestimonialSection = {
   id: string;
   type: 'testimonial';
   props: TestimonialProps;
+  styles: SectionStyles;
 };
 
 /** Discriminated union of all section types */
@@ -178,7 +215,7 @@ const footerDefinition: SectionDefinition<'footer'> = {
   label: 'Footer',
   description: 'Simple site footer.',
   defaultProps: {
-    text: '© 2025 Rekaz Mini Builder. All rights reserved.',
+    text: '© 2025 Rekaz Website Builder. All rights reserved.',
   },
 };
 

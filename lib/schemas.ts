@@ -5,6 +5,15 @@ import { z } from 'zod';
 // =============================================================================
 
 /**
+ * Schema for section styles (shared across all sections).
+ */
+export const sectionStylesSchema = z.object({
+  backgroundColor: z.string().optional(),
+  textColor: z.string().optional(),
+  paddingY: z.enum(['none', 'sm', 'md', 'lg', 'xl']).optional(),
+});
+
+/**
  * Schema for navigation items in header sections.
  */
 export const navItemSchema = z.object({
@@ -78,6 +87,7 @@ export const heroSectionSchema = z.object({
   id: z.string(),
   type: z.literal('hero'),
   props: heroPropsSchema,
+  styles: sectionStylesSchema,
 });
 
 /**
@@ -87,6 +97,7 @@ export const headerSectionSchema = z.object({
   id: z.string(),
   type: z.literal('header'),
   props: headerPropsSchema,
+  styles: sectionStylesSchema,
 });
 
 /**
@@ -96,6 +107,7 @@ export const featuresSectionSchema = z.object({
   id: z.string(),
   type: z.literal('features'),
   props: featuresPropsSchema,
+  styles: sectionStylesSchema,
 });
 
 /**
@@ -105,6 +117,7 @@ export const footerSectionSchema = z.object({
   id: z.string(),
   type: z.literal('footer'),
   props: footerPropsSchema,
+  styles: sectionStylesSchema,
 });
 
 /**
@@ -114,6 +127,7 @@ export const ctaSectionSchema = z.object({
   id: z.string(),
   type: z.literal('cta'),
   props: ctaPropsSchema,
+  styles: sectionStylesSchema,
 });
 
 /**
@@ -123,6 +137,7 @@ export const testimonialSectionSchema = z.object({
   id: z.string(),
   type: z.literal('testimonial'),
   props: testimonialPropsSchema,
+  styles: sectionStylesSchema,
 });
 
 /**

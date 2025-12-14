@@ -5,6 +5,8 @@ import {
   SectionInstance,
   SectionType,
   SectionProps,
+  SectionStyles,
+  DEFAULT_SECTION_STYLES,
   HeroProps,
   HeaderProps,
   FeaturesProps,
@@ -22,6 +24,7 @@ type LayoutState = {
   selectedSectionId: string | null;
   addSection: (type: SectionType) => void;
   updateSection: (id: string, patch: Partial<SectionProps>) => void;
+  updateSectionStyles: (id: string, styles: Partial<SectionStyles>) => void;
   removeSection: (id: string) => void;
   reorderSections: (fromIndex: number, toIndex: number) => void;
   replaceAll: (sections: SectionInstance[]) => void;
@@ -52,21 +55,23 @@ function createSectionInstance(type: SectionType): SectionInstance | null {
   const id = nanoid();
   // Deep copy the default props to avoid mutations
   const props = JSON.parse(JSON.stringify(definition.defaultProps));
+  // Create default styles
+  const styles: SectionStyles = { ...DEFAULT_SECTION_STYLES };
 
   // Type-safe section creation using discriminated union
   switch (type) {
     case 'hero':
-      return { id, type: 'hero', props: props as HeroProps };
+      return { id, type: 'hero', props: props as HeroProps, styles };
     case 'header':
-      return { id, type: 'header', props: props as HeaderProps };
+      return { id, type: 'header', props: props as HeaderProps, styles };
     case 'features':
-      return { id, type: 'features', props: props as FeaturesProps };
+      return { id, type: 'features', props: props as FeaturesProps, styles };
     case 'footer':
-      return { id, type: 'footer', props: props as FooterProps };
+      return { id, type: 'footer', props: props as FooterProps, styles };
     case 'cta':
-      return { id, type: 'cta', props: props as CtaProps };
+      return { id, type: 'cta', props: props as CtaProps, styles };
     case 'testimonial':
-      return { id, type: 'testimonial', props: props as TestimonialProps };
+      return { id, type: 'testimonial', props: props as TestimonialProps, styles };
     default:
       return null;
   }
@@ -97,6 +102,14 @@ export const useLayoutStore = create<LayoutState>((set) => ({
         if (section.id !== id) return section;
         // Merge props while preserving the discriminated union structure
         return { ...section, props: { ...section.props, ...patch } } as SectionInstance;
+      }),
+    })),
+
+  updateSectionStyles: (id, stylesPatch) =>
+    set((state) => ({
+      sections: state.sections.map((section) => {
+        if (section.id !== id) return section;
+        return { ...section, styles: { ...section.styles, ...stylesPatch } } as SectionInstance;
       }),
     })),
 

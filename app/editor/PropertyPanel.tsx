@@ -4,6 +4,8 @@ import React, { memo, useState } from 'react';
 import type {
   SectionInstance,
   SectionType,
+  SectionStyles,
+  PaddingSize,
   NavItem,
   FeatureItem,
 } from '@/lib/sections';
@@ -34,6 +36,7 @@ export const PropertyPanel = memo(function PropertyPanel({
   section,
 }: PropertyPanelProps) {
   const updateSection = useLayoutStore((s) => s.updateSection);
+  const updateSectionStyles = useLayoutStore((s) => s.updateSectionStyles);
   const allSections = useLayoutStore((s) => s.sections);
 
   if (!section) {
@@ -101,6 +104,11 @@ export const PropertyPanel = memo(function PropertyPanel({
               placeholder="https://example.com/image.jpg"
             />
           </div>
+
+          <StylesEditor
+            styles={section.styles}
+            onStyleChange={(styles) => updateSectionStyles(section.id, styles)}
+          />
         </div>
       );
     }
@@ -194,6 +202,11 @@ export const PropertyPanel = memo(function PropertyPanel({
               </Card>
             )}
           </div>
+
+          <StylesEditor
+            styles={section.styles}
+            onStyleChange={(styles) => updateSectionStyles(section.id, styles)}
+          />
         </div>
       );
     }
@@ -287,6 +300,11 @@ export const PropertyPanel = memo(function PropertyPanel({
               </Card>
             )}
           </div>
+
+          <StylesEditor
+            styles={section.styles}
+            onStyleChange={(styles) => updateSectionStyles(section.id, styles)}
+          />
         </div>
       );
     }
@@ -306,6 +324,11 @@ export const PropertyPanel = memo(function PropertyPanel({
               rows={3}
             />
           </div>
+
+          <StylesEditor
+            styles={section.styles}
+            onStyleChange={(styles) => updateSectionStyles(section.id, styles)}
+          />
         </div>
       );
     }
@@ -345,6 +368,11 @@ export const PropertyPanel = memo(function PropertyPanel({
               onChange={handleChange('buttonLabel')}
             />
           </div>
+
+          <StylesEditor
+            styles={section.styles}
+            onStyleChange={(styles) => updateSectionStyles(section.id, styles)}
+          />
         </div>
       );
     }
@@ -386,6 +414,11 @@ export const PropertyPanel = memo(function PropertyPanel({
               onChange={handleChange('authorTitle')}
             />
           </div>
+
+          <StylesEditor
+            styles={section.styles}
+            onStyleChange={(styles) => updateSectionStyles(section.id, styles)}
+          />
         </div>
       );
     }
@@ -523,6 +556,164 @@ function NavItemEditor({
           />
         </div>
       )}
+    </Card>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// StylesEditor - Component for editing section styles
+// -----------------------------------------------------------------------------
+
+/** Preset color options for quick selection */
+const COLOR_PRESETS = [
+  { value: '', label: 'Default', color: 'transparent' },
+  { value: '#ffffff', label: 'White', color: '#ffffff' },
+  { value: '#f8f9fb', label: 'Light Gray', color: '#f8f9fb' },
+  { value: '#f3f4f6', label: 'Gray 100', color: '#f3f4f6' },
+  { value: '#030014', label: 'Dark', color: '#030014' },
+  { value: '#FFF5F4', label: 'Coral Light', color: '#FFF5F4' },
+  { value: '#F17265', label: 'Coral', color: '#F17265' },
+];
+
+const TEXT_COLOR_PRESETS = [
+  { value: '', label: 'Default', color: '#030014' },
+  { value: '#030014', label: 'Dark', color: '#030014' },
+  { value: '#ffffff', label: 'White', color: '#ffffff' },
+  { value: '#374151', label: 'Gray 700', color: '#374151' },
+  { value: '#6b7280', label: 'Gray 500', color: '#6b7280' },
+  { value: '#F17265', label: 'Coral', color: '#F17265' },
+];
+
+const PADDING_OPTIONS: { value: PaddingSize; label: string }[] = [
+  { value: 'none', label: 'None' },
+  { value: 'sm', label: 'Small' },
+  { value: 'md', label: 'Medium' },
+  { value: 'lg', label: 'Large' },
+  { value: 'xl', label: 'Extra Large' },
+];
+
+type StylesEditorProps = {
+  styles: SectionStyles;
+  onStyleChange: (styles: Partial<SectionStyles>) => void;
+};
+
+function StylesEditor({ styles, onStyleChange }: StylesEditorProps) {
+  const [showCustomBg, setShowCustomBg] = useState(
+    styles.backgroundColor && !COLOR_PRESETS.some(p => p.value === styles.backgroundColor)
+  );
+  const [showCustomText, setShowCustomText] = useState(
+    styles.textColor && !TEXT_COLOR_PRESETS.some(p => p.value === styles.textColor)
+  );
+
+  return (
+    <Card variant="muted" padding="sm" rounded="lg" className="space-y-4">
+      <h4 className="text-sm font-semibold text-gray-700">🎨 Style Options</h4>
+
+      {/* Background Color */}
+      <div className="space-y-2">
+        <Label hint="Choose a preset or enter custom color">Background Color</Label>
+        <div className="flex flex-wrap gap-2">
+          {COLOR_PRESETS.map((preset) => (
+            <button
+              key={preset.value}
+              type="button"
+              onClick={() => {
+                onStyleChange({ backgroundColor: preset.value });
+                setShowCustomBg(false);
+              }}
+              className={`w-8 h-8 rounded-lg border-2 transition-all ${
+                styles.backgroundColor === preset.value
+                  ? 'border-[#F17265] ring-2 ring-[#F17265] ring-opacity-30'
+                  : 'border-gray-300 hover:border-gray-400'
+              }`}
+              style={{ backgroundColor: preset.color }}
+              title={preset.label}
+              aria-label={preset.label}
+            />
+          ))}
+          <button
+            type="button"
+            onClick={() => setShowCustomBg(!showCustomBg)}
+            className={`w-8 h-8 rounded-lg border-2 transition-all flex items-center justify-center text-xs ${
+              showCustomBg ? 'border-[#F17265] bg-[#FFF5F4]' : 'border-gray-300 hover:border-gray-400'
+            }`}
+            title="Custom color"
+            aria-label="Custom color"
+          >
+            +
+          </button>
+        </div>
+        {showCustomBg && (
+          <Input
+            type="text"
+            value={styles.backgroundColor ?? ''}
+            onChange={(e) => onStyleChange({ backgroundColor: e.target.value })}
+            placeholder="#hex or color name"
+          />
+        )}
+      </div>
+
+      {/* Text Color */}
+      <div className="space-y-2">
+        <Label hint="Choose a preset or enter custom color">Text Color</Label>
+        <div className="flex flex-wrap gap-2">
+          {TEXT_COLOR_PRESETS.map((preset) => (
+            <button
+              key={preset.value}
+              type="button"
+              onClick={() => {
+                onStyleChange({ textColor: preset.value });
+                setShowCustomText(false);
+              }}
+              className={`w-8 h-8 rounded-lg border-2 transition-all flex items-center justify-center ${
+                styles.textColor === preset.value
+                  ? 'border-[#F17265] ring-2 ring-[#F17265] ring-opacity-30'
+                  : 'border-gray-300 hover:border-gray-400'
+              }`}
+              style={{ backgroundColor: preset.color }}
+              title={preset.label}
+              aria-label={preset.label}
+            >
+              <span style={{ color: preset.color === '#ffffff' ? '#030014' : '#ffffff' }}>A</span>
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setShowCustomText(!showCustomText)}
+            className={`w-8 h-8 rounded-lg border-2 transition-all flex items-center justify-center text-xs ${
+              showCustomText ? 'border-[#F17265] bg-[#FFF5F4]' : 'border-gray-300 hover:border-gray-400'
+            }`}
+            title="Custom color"
+            aria-label="Custom color"
+          >
+            +
+          </button>
+        </div>
+        {showCustomText && (
+          <Input
+            type="text"
+            value={styles.textColor ?? ''}
+            onChange={(e) => onStyleChange({ textColor: e.target.value })}
+            placeholder="#hex or color name"
+          />
+        )}
+      </div>
+
+      {/* Padding */}
+      <div className="space-y-2">
+        <Label htmlFor="padding-select">Vertical Padding</Label>
+        <Select
+          id="padding-select"
+          value={styles.paddingY ?? 'md'}
+          onChange={(e) => onStyleChange({ paddingY: e.target.value as PaddingSize })}
+        >
+          {PADDING_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
+      </div>
     </Card>
   );
 }

@@ -1,15 +1,34 @@
 'use client';
 
-import { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import Link from 'next/link';
 import type {
   SectionInstance,
+  SectionStyles,
   HeaderProps,
   NavItem,
   FeatureItem,
 } from '@/lib/sections';
+import { PADDING_Y_CLASSES } from '@/lib/sections';
 import { loadSectionsFromStorage } from '@/lib/storage';
 import { Button, EmptyState } from '@/components/ui';
+
+/** Helper to build inline styles from section styles */
+function buildInlineStyles(styles: SectionStyles): React.CSSProperties {
+  const inlineStyles: React.CSSProperties = {};
+  if (styles.backgroundColor) {
+    inlineStyles.backgroundColor = styles.backgroundColor;
+  }
+  if (styles.textColor) {
+    inlineStyles.color = styles.textColor;
+  }
+  return inlineStyles;
+}
+
+/** Helper to get padding class from styles */
+function getPaddingClass(styles: SectionStyles, defaultSize: 'sm' | 'md' | 'lg' | 'xl' = 'md'): string {
+  return PADDING_Y_CLASSES[styles.paddingY ?? defaultSize];
+}
 
 /** Section instance with computed anchor ID */
 type SectionWithAnchor = SectionInstance & { sectionId: string };
@@ -105,12 +124,18 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
   switch (section.type) {
     case 'hero': {
       const { title, subtitle, buttonLabel, imageUrl } = section.props;
+      const { styles } = section;
+      const paddingClass = getPaddingClass(styles, 'xl');
+      const inlineStyles = buildInlineStyles(styles);
+      const hasCustomBg = Boolean(styles.backgroundColor);
+      
       return (
         <section
           id={sectionId}
-          className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white scroll-mt-16 md:scroll-mt-20"
+          className={`relative ${paddingClass} text-center ${!hasCustomBg ? 'bg-gradient-to-b from-[#FFF5F4] to-white' : ''} scroll-mt-16 md:scroll-mt-20`}
+          style={inlineStyles}
         >
-          {imageUrl && (
+          {imageUrl && !hasCustomBg && (
             <div className="absolute inset-0 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -122,11 +147,11 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
             </div>
           )}
           <div className="relative max-w-4xl mx-auto px-6">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-[#030014]">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-gray-600 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+              <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-80">
                 {subtitle}
               </p>
             )}
@@ -146,18 +171,23 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
     }
 
     case 'header': {
-      return <HeaderSectionPreview props={section.props} />;
+      return <HeaderSectionPreview props={section.props} styles={section.styles} />;
     }
 
     case 'features': {
       const { heading, items } = section.props;
+      const { styles } = section;
+      const paddingClass = getPaddingClass(styles, 'lg');
+      const inlineStyles = buildInlineStyles(styles);
+      
       return (
         <section
           id={sectionId}
-          className="py-16 md:py-24 bg-white scroll-mt-16 md:scroll-mt-20"
+          className={`${paddingClass} scroll-mt-16 md:scroll-mt-20`}
+          style={inlineStyles}
         >
           <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-[#030014]">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
               {heading}
             </h2>
             <div className="grid gap-8 md:grid-cols-3">
@@ -185,10 +215,16 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
 
     case 'footer': {
       const { text } = section.props;
+      const { styles } = section;
+      const paddingClass = getPaddingClass(styles, 'md');
+      const inlineStyles = buildInlineStyles(styles);
+      const hasCustomBg = Boolean(styles.backgroundColor);
+      
       return (
         <footer
           id={sectionId}
-          className="py-8 bg-[#030014] text-gray-400 scroll-mt-16 md:scroll-mt-20"
+          className={`${paddingClass} ${!hasCustomBg ? 'bg-[#030014] text-gray-400' : ''} scroll-mt-16 md:scroll-mt-20`}
+          style={inlineStyles}
         >
           <div className="max-w-6xl mx-auto px-6 text-center">
             <p>{text}</p>
@@ -199,18 +235,27 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
 
     case 'cta': {
       const { heading, description, buttonLabel } = section.props;
+      const { styles } = section;
+      const paddingClass = getPaddingClass(styles, 'lg');
+      const inlineStyles = buildInlineStyles(styles);
+      const hasCustomBg = Boolean(styles.backgroundColor);
+      
       return (
         <section
           id={sectionId}
-          className="py-16 md:py-24 scroll-mt-16 md:scroll-mt-20"
+          className={`${paddingClass} scroll-mt-16 md:scroll-mt-20`}
+          style={!hasCustomBg ? {} : inlineStyles}
         >
           <div className="max-w-4xl mx-auto px-6">
-            <div className="text-center py-16 px-8 bg-gradient-to-r from-[#F17265] to-[#E25C4F] rounded-3xl shadow-xl">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+            <div 
+              className={`text-center py-16 px-8 ${!hasCustomBg ? 'bg-gradient-to-r from-[#F17265] to-[#E25C4F]' : ''} rounded-3xl shadow-xl`}
+              style={hasCustomBg ? inlineStyles : {}}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 {heading}
               </h2>
               {description && (
-                <p className="text-white/90 text-lg md:text-xl mb-8 max-w-xl mx-auto">
+                <p className="text-lg md:text-xl mb-8 max-w-xl mx-auto opacity-90">
                   {description}
                 </p>
               )}
@@ -218,7 +263,7 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
                 variant="outline"
                 size="lg"
                 shape="pill"
-                className="bg-white text-[#F17265] border-white hover:bg-gray-100 hover:border-gray-100 text-lg shadow-lg"
+                className={hasCustomBg ? '' : 'bg-white text-[#F17265] border-white hover:bg-gray-100 hover:border-gray-100 text-lg shadow-lg'}
               >
                 {buttonLabel}
               </Button>
@@ -230,14 +275,20 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
 
     case 'testimonial': {
       const { quote, authorName, authorTitle } = section.props;
+      const { styles } = section;
+      const paddingClass = getPaddingClass(styles, 'lg');
+      const inlineStyles = buildInlineStyles(styles);
+      const hasCustomBg = Boolean(styles.backgroundColor);
+      
       return (
         <section
           id={sectionId}
-          className="py-16 md:py-24 bg-gray-50 scroll-mt-16 md:scroll-mt-20"
+          className={`${paddingClass} ${!hasCustomBg ? 'bg-gray-50' : ''} scroll-mt-16 md:scroll-mt-20`}
+          style={inlineStyles}
         >
           <div className="max-w-3xl mx-auto px-6 text-center">
             <div className="text-6xl text-[#F17265] mb-6">&ldquo;</div>
-            <blockquote className="text-xl md:text-2xl text-gray-700 italic mb-8 leading-relaxed">
+            <blockquote className="text-xl md:text-2xl italic mb-8 leading-relaxed opacity-90">
               {quote}
             </blockquote>
             <div className="flex flex-col items-center">
@@ -245,9 +296,9 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
                 {authorName.charAt(0).toUpperCase()}
               </div>
               <cite className="not-italic">
-                <div className="font-semibold text-lg text-[#030014]">{authorName}</div>
+                <div className="font-semibold text-lg">{authorName}</div>
                 {authorTitle && (
-                  <div className="text-gray-500">{authorTitle}</div>
+                  <div className="opacity-70">{authorTitle}</div>
                 )}
               </cite>
             </div>
@@ -264,11 +315,15 @@ function PreviewSection({ section }: { section: SectionWithAnchor }) {
  */
 const HeaderSectionPreview = memo(function HeaderSectionPreview({
   props,
+  styles,
 }: {
   props: HeaderProps;
+  styles: SectionStyles;
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { logoText, navItems } = props;
+  const inlineStyles = buildInlineStyles(styles);
+  const hasCustomBg = Boolean(styles.backgroundColor);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -298,10 +353,11 @@ const HeaderSectionPreview = memo(function HeaderSectionPreview({
   return (
     <header
       id="header"
-      className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200"
+      className={`sticky top-0 z-50 ${!hasCustomBg ? 'bg-white/80' : ''} backdrop-blur-md border-b border-gray-200`}
+      style={inlineStyles}
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="font-bold text-2xl text-[#030014]">{logoText}</div>
+        <div className="font-bold text-2xl">{logoText}</div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
@@ -310,7 +366,7 @@ const HeaderSectionPreview = memo(function HeaderSectionPreview({
               key={idx}
               href={item.link || '#'}
               onClick={(e) => handleNavClick(e, item.link || '#')}
-              className="text-gray-700 hover:text-[#F17265] font-medium transition cursor-pointer"
+              className="hover:text-[#F17265] font-medium transition cursor-pointer opacity-80 hover:opacity-100"
             >
               {item.label}
             </a>
@@ -319,7 +375,7 @@ const HeaderSectionPreview = memo(function HeaderSectionPreview({
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-gray-700 p-2 -mr-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="md:hidden p-2 -mr-2 hover:bg-gray-100 rounded-lg transition-colors opacity-80"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileMenuOpen}
@@ -358,14 +414,17 @@ const HeaderSectionPreview = memo(function HeaderSectionPreview({
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <nav className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-md animate-fade-slide-in">
+        <nav 
+          className="md:hidden border-t border-gray-200 backdrop-blur-md animate-fade-slide-in"
+          style={hasCustomBg ? { backgroundColor: styles.backgroundColor } : { backgroundColor: 'rgba(255,255,255,0.95)' }}
+        >
           <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-2">
             {navItems.map((item: NavItem, idx: number) => (
               <a
                 key={idx}
                 href={item.link || '#'}
                 onClick={(e) => handleNavClick(e, item.link || '#')}
-                className="text-gray-700 hover:text-[#F17265] hover:bg-[#FFF5F4] font-medium py-3 px-4 rounded-lg transition-all cursor-pointer"
+                className="hover:text-[#F17265] hover:bg-[#FFF5F4] font-medium py-3 px-4 rounded-lg transition-all cursor-pointer opacity-80 hover:opacity-100"
               >
                 {item.label}
               </a>
