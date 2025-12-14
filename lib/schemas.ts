@@ -54,6 +54,24 @@ export const footerPropsSchema = z.object({
 });
 
 /**
+ * Schema for CTA section props.
+ */
+export const ctaPropsSchema = z.object({
+  heading: z.string(),
+  description: z.string().optional(),
+  buttonLabel: z.string(),
+});
+
+/**
+ * Schema for Testimonial section props.
+ */
+export const testimonialPropsSchema = z.object({
+  quote: z.string(),
+  authorName: z.string(),
+  authorTitle: z.string().optional(),
+});
+
+/**
  * Schema for Hero section instance.
  */
 export const heroSectionSchema = z.object({
@@ -90,6 +108,24 @@ export const footerSectionSchema = z.object({
 });
 
 /**
+ * Schema for CTA section instance.
+ */
+export const ctaSectionSchema = z.object({
+  id: z.string(),
+  type: z.literal('cta'),
+  props: ctaPropsSchema,
+});
+
+/**
+ * Schema for Testimonial section instance.
+ */
+export const testimonialSectionSchema = z.object({
+  id: z.string(),
+  type: z.literal('testimonial'),
+  props: testimonialPropsSchema,
+});
+
+/**
  * Schema for any section instance (discriminated union).
  */
 export const sectionInstanceSchema = z.discriminatedUnion('type', [
@@ -97,6 +133,8 @@ export const sectionInstanceSchema = z.discriminatedUnion('type', [
   headerSectionSchema,
   featuresSectionSchema,
   footerSectionSchema,
+  ctaSectionSchema,
+  testimonialSectionSchema,
 ]);
 
 /**
