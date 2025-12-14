@@ -24,6 +24,9 @@ function arePropsEqual(prevProps: Props, nextProps: Props): boolean {
   // Compare type
   if (prevProps.section.type !== nextProps.section.type) return false;
   
+  // Compare onSelect callback reference to avoid stale closures
+  if (prevProps.onSelect !== nextProps.onSelect) return false;
+  
   // Deep compare props and styles via JSON (safe for our simple data)
   const prevJson = JSON.stringify({ props: prevProps.section.props, styles: prevProps.section.styles });
   const nextJson = JSON.stringify({ props: nextProps.section.props, styles: nextProps.section.styles });

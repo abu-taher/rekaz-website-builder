@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 import { SECTION_LIBRARY } from '@/lib/sections';
 import type { SectionInstance } from '@/lib/sections';
@@ -69,6 +69,11 @@ export function Editor() {
   const selectedSection = sections.find(
     (section) => section.id === selectedSectionId
   );
+
+  // Memoized callback for section selection to maintain stable reference
+  const handleSectionSelect = useCallback(() => {
+    setMobileTab('library');
+  }, []);
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -374,7 +379,7 @@ export function Editor() {
                     <SectionSortableItem 
                       key={section.id} 
                       section={section}
-                      onSelect={() => setMobileTab('library')}
+                      onSelect={handleSectionSelect}
                     />
                   ))}
                 </div>
