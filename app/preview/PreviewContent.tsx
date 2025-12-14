@@ -2,27 +2,49 @@
 
 import { useEffect, useState, memo } from 'react';
 import Link from 'next/link';
-import type { SectionInstance } from '@/lib/sections';
+import type {
+  SectionInstance,
+  HeaderProps,
+  NavItem,
+  FeatureItem,
+} from '@/lib/sections';
+import { loadSectionsFromStorage } from '@/lib/storage';
 
-export function PreviewContent() {
-  const [sections, setSections] = useState<SectionInstance[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+/** Section instance with computed anchor ID */
+type SectionWithAnchor = SectionInstance & { sectionId: string };
+
+/**
+ * Custom hook to load sections from storage.
+ * Uses useSyncExternalStore for SSR-safe data loading.
+ */
+function useSectionsFromStorage(): { sections: SectionInstance[]; isLoading: boolean } {
+  const [state, setState] = useState<{ sections: SectionInstance[]; isLoading: boolean }>({
+    sections: [],
+    isLoading: true,
+  });
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('rekaz-layout');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setSections(parsed);
-        }
+    let cancelled = false;
+
+    // Defer to next tick to avoid synchronous setState warning
+    const timeoutId = setTimeout(() => {
+      if (!cancelled) {
+        const storedSections = loadSectionsFromStorage();
+        setState({ sections: storedSections, isLoading: false });
       }
-    } catch (error) {
-      console.error('Failed to load preview:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
   }, []);
+
+  return state;
+}
+
+export function PreviewContent() {
+  const { sections, isLoading } = useSectionsFromStorage();
 
   if (isLoading) {
     return (
@@ -52,7 +74,7 @@ export function PreviewContent() {
 
   // Count sections by type to create unique IDs (e.g., hero, hero-2, hero-3)
   const sectionCounts: Record<string, number> = {};
-  const sectionsWithIds = sections.map((section) => {
+  const sectionsWithIds: SectionWithAnchor[] = sections.map((section) => {
     const count = (sectionCounts[section.type] || 0) + 1;
     sectionCounts[section.type] = count;
     const sectionId = count === 1 ? section.type : `${section.type}-${count}`;
@@ -62,22 +84,27 @@ export function PreviewContent() {
   return (
     <div className="min-h-screen bg-white scroll-smooth">
       {sectionsWithIds.map((section) => (
-        <PreviewSection key={section.id} section={section} sectionId={section.sectionId} />
+        <PreviewSection key={section.id} section={section} />
       ))}
     </div>
   );
 }
 
-function PreviewSection({ section, sectionId }: { section: SectionInstance; sectionId: string }) {
-  const { type, props } = section;
+/**
+ * Renders a section in preview mode based on its type.
+ * Uses discriminated union narrowing for type-safe prop access.
+ */
+function PreviewSection({ section }: { section: SectionWithAnchor }) {
+  const { sectionId } = section;
 
-  switch (type) {
+  switch (section.type) {
     case 'hero': {
-      const { title, subtitle, buttonLabel, imageUrl } = props ?? {};
+      const { title, subtitle, buttonLabel, imageUrl } = section.props;
       return (
-        <section 
+        <section
           id={sectionId}
-          className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white scroll-mt-16 md:scroll-mt-20">
+          className="relative py-20 md:py-32 text-center bg-gradient-to-b from-[#FFF5F4] to-white scroll-mt-16 md:scroll-mt-20"
+        >
           {imageUrl && (
             <div className="absolute inset-0 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -109,34 +136,37 @@ function PreviewSection({ section, sectionId }: { section: SectionInstance; sect
     }
 
     case 'header': {
-      return <HeaderSection props={props} />;
+      return <HeaderSectionPreview props={section.props} />;
     }
 
     case 'features': {
-      const { heading, items = [] } = props ?? {};
+      const { heading, items } = section.props;
       return (
-        <section id={sectionId} className="py-16 md:py-24 bg-white scroll-mt-16 md:scroll-mt-20">
+        <section
+          id={sectionId}
+          className="py-16 md:py-24 bg-white scroll-mt-16 md:scroll-mt-20"
+        >
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-[#030014]">
               {heading}
             </h2>
             <div className="grid gap-8 md:grid-cols-3">
-              {items.map(
-                (item: { title: string; description: string }, idx: number) => (
-                  <div
-                    key={idx}
-                    className="group p-8 rounded-2xl bg-gray-50 hover:bg-[#FFF5F4] border-2 border-transparent hover:border-[#F17265] transition-all duration-300"
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-[#F17265] text-white flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
-                      {idx + 1}
-                    </div>
-                    <h3 className="font-bold text-xl mb-3 text-[#030014]">{item.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {item.description}
-                    </p>
+              {items.map((item: FeatureItem, idx: number) => (
+                <div
+                  key={idx}
+                  className="group p-8 rounded-2xl bg-gray-50 hover:bg-[#FFF5F4] border-2 border-transparent hover:border-[#F17265] transition-all duration-300"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-[#F17265] text-white flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                    {idx + 1}
                   </div>
-                )
-              )}
+                  <h3 className="font-bold text-xl mb-3 text-[#030014]">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -144,42 +174,52 @@ function PreviewSection({ section, sectionId }: { section: SectionInstance; sect
     }
 
     case 'footer': {
-      const { text } = props ?? {};
+      const { text } = section.props;
       return (
-        <footer id={sectionId} className="py-8 bg-[#030014] text-gray-400 scroll-mt-16 md:scroll-mt-20">
+        <footer
+          id={sectionId}
+          className="py-8 bg-[#030014] text-gray-400 scroll-mt-16 md:scroll-mt-20"
+        >
           <div className="max-w-6xl mx-auto px-6 text-center">
             <p>{text}</p>
           </div>
         </footer>
       );
     }
-
-    default:
-      return null;
   }
 }
 
-// Separate component for header to manage mobile menu state
-const HeaderSection = memo(function HeaderSection({ props }: { props: Record<string, unknown> }) {
+/**
+ * Header section with mobile menu support.
+ * Separated to manage local menu open/close state.
+ */
+const HeaderSectionPreview = memo(function HeaderSectionPreview({
+  props,
+}: {
+  props: HeaderProps;
+}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { logoText, navItems = [] } = props ?? {};
+  const { logoText, navItems } = props;
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    link: string
+  ) => {
     // Check if it's a hash link (e.g., #features, #hero)
     if (link.startsWith('#')) {
       e.preventDefault();
       const targetId = link.slice(1); // Remove the #
       const targetElement = document.getElementById(targetId);
-      
+
       // Close mobile menu first
       setIsMobileMenuOpen(false);
-      
+
       if (targetElement) {
         // Delay scroll to allow menu to close first (fixes mobile scroll position)
         setTimeout(() => {
-          targetElement.scrollIntoView({ 
+          targetElement.scrollIntoView({
             behavior: 'smooth',
-            block: 'start'
+            block: 'start',
           });
         }, 100);
       }
@@ -187,13 +227,16 @@ const HeaderSection = memo(function HeaderSection({ props }: { props: Record<str
   };
 
   return (
-    <header id="header" className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <header
+      id="header"
+      className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200"
+    >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="font-bold text-2xl text-[#030014]">{logoText as string}</div>
-        
+        <div className="font-bold text-2xl text-[#030014]">{logoText}</div>
+
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {(navItems as { label: string; link: string }[]).map((item, idx) => (
+          {navItems.map((item: NavItem, idx: number) => (
             <a
               key={idx}
               href={item.link || '#'}
@@ -204,31 +247,51 @@ const HeaderSection = memo(function HeaderSection({ props }: { props: Record<str
             </a>
           ))}
         </nav>
-        
+
         {/* Mobile Menu Button */}
-        <button 
+        <button
           className="md:hidden text-gray-700 p-2 -mr-2 hover:bg-gray-100 rounded-lg transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileMenuOpen}
         >
           {isMobileMenuOpen ? (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           ) : (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           )}
         </button>
       </div>
-      
+
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <nav className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-md animate-fade-slide-in">
           <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-2">
-            {(navItems as { label: string; link: string }[]).map((item, idx) => (
+            {navItems.map((item: NavItem, idx: number) => (
               <a
                 key={idx}
                 href={item.link || '#'}

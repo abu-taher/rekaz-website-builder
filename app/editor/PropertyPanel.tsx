@@ -1,23 +1,31 @@
 'use client';
 
 import React, { memo, useState } from 'react';
-import type { SectionInstance } from '@/lib/sections';
+import type {
+  SectionInstance,
+  SectionType,
+  NavItem,
+  FeatureItem,
+} from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
 
 type PropertyPanelProps = {
   section: SectionInstance | undefined;
 };
 
-// Helper to get section display name
-const getSectionDisplayName = (type: string, index: number) => {
-  const names: Record<string, string> = {
-    hero: 'Hero',
-    header: 'Header',
-    features: 'Features',
-    footer: 'Footer',
-  };
-  return index > 0 ? `${names[type] || type} ${index + 1}` : names[type] || type;
+/** Map of section types to display names */
+const SECTION_DISPLAY_NAMES: Record<SectionType, string> = {
+  hero: 'Hero',
+  header: 'Header',
+  features: 'Features',
+  footer: 'Footer',
 };
+
+/** Get a display-friendly name for a section, with index suffix for duplicates */
+function getSectionDisplayName(type: SectionType, index: number): string {
+  const baseName = SECTION_DISPLAY_NAMES[type] ?? type;
+  return index > 0 ? `${baseName} ${index + 1}` : baseName;
+}
 
 export const PropertyPanel = memo(function PropertyPanel({
   section,
@@ -39,10 +47,9 @@ export const PropertyPanel = memo(function PropertyPanel({
       updateSection(section.id, { [field]: e.target.value });
     };
 
-  const props = section.props ?? {};
-
   switch (section.type) {
-    case 'hero':
+    case 'hero': {
+      const { title, subtitle, buttonLabel, imageUrl } = section.props;
       return (
         <div className="space-y-4">
           <h3 className="text-base font-bold text-[#030014]">Hero Settings</h3>
@@ -52,7 +59,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <input
               id="hero-title"
               type="text"
-              value={props.title ?? ''}
+              value={title}
               onChange={handleChange('title')}
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
@@ -62,7 +69,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <label htmlFor="hero-subtitle" className="text-sm font-medium text-gray-700 block">Subtitle</label>
             <textarea
               id="hero-subtitle"
-              value={props.subtitle ?? ''}
+              value={subtitle ?? ''}
               onChange={handleChange('subtitle')}
               rows={3}
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
@@ -74,7 +81,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <input
               id="hero-button"
               type="text"
-              value={props.buttonLabel ?? ''}
+              value={buttonLabel ?? ''}
               onChange={handleChange('buttonLabel')}
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
@@ -85,7 +92,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <input
               id="hero-image"
               type="url"
-              value={props.imageUrl ?? ''}
+              value={imageUrl ?? ''}
               onChange={handleChange('imageUrl')}
               placeholder="https://example.com/image.jpg"
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
@@ -94,9 +101,10 @@ export const PropertyPanel = memo(function PropertyPanel({
           </div>
         </div>
       );
+    }
 
     case 'header': {
-      const navItems: { label: string; link: string }[] = props.navItems ?? [];
+      const { logoText, navItems } = section.props;
 
       // Get available sections for linking (exclude current header)
       const availableSections = allSections
@@ -117,14 +125,14 @@ export const PropertyPanel = memo(function PropertyPanel({
         field: 'label' | 'link',
         value: string
       ) => {
-        const newItems = navItems.map((item, i) =>
+        const newItems: NavItem[] = navItems.map((item, i) =>
           i === index ? { ...item, [field]: value } : item
         );
         updateSection(section.id, { navItems: newItems });
       };
 
       const handleAddNavItem = () => {
-        const newItems = [
+        const newItems: NavItem[] = [
           ...navItems,
           { label: 'New Link', link: '#' },
         ];
@@ -150,7 +158,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <input
               id="header-logo"
               type="text"
-              value={props.logoText ?? ''}
+              value={logoText}
               onChange={handleChange('logoText')}
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
@@ -192,21 +200,21 @@ export const PropertyPanel = memo(function PropertyPanel({
     }
 
     case 'features': {
-      const items: { title: string; description: string }[] = props.items ?? [];
+      const { heading, items } = section.props;
 
       const handleItemChange = (
         index: number,
         field: 'title' | 'description',
         value: string
       ) => {
-        const newItems = items.map((item, i) =>
+        const newItems: FeatureItem[] = items.map((item, i) =>
           i === index ? { ...item, [field]: value } : item
         );
         updateSection(section.id, { items: newItems });
       };
 
       const handleAddItem = () => {
-        const newItems = [
+        const newItems: FeatureItem[] = [
           ...items,
           { title: 'New Feature', description: 'Feature description' },
         ];
@@ -227,7 +235,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <input
               id="features-heading"
               type="text"
-              value={props.heading ?? ''}
+              value={heading}
               onChange={handleChange('heading')}
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
@@ -292,7 +300,8 @@ export const PropertyPanel = memo(function PropertyPanel({
       );
     }
 
-    case 'footer':
+    case 'footer': {
+      const { text } = section.props;
       return (
         <div className="space-y-4">
           <h3 className="text-base font-bold text-[#030014]">Footer Settings</h3>
@@ -301,7 +310,7 @@ export const PropertyPanel = memo(function PropertyPanel({
             <label htmlFor="footer-text" className="text-sm font-medium text-gray-700 block">Text</label>
             <textarea
               id="footer-text"
-              value={props.text ?? ''}
+              value={text}
               onChange={handleChange('text')}
               rows={3}
               className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
@@ -309,22 +318,25 @@ export const PropertyPanel = memo(function PropertyPanel({
           </div>
         </div>
       );
-
-    default:
-      return (
-        <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
-          No editor defined for type:{' '}
-          <span className="font-mono font-semibold text-[#030014]">{section.type}</span>
-        </div>
-      );
+    }
   }
 });
 
-// Separate component for nav item editing with link type selection
+// -----------------------------------------------------------------------------
+// NavItemEditor - Component for editing individual navigation items
+// -----------------------------------------------------------------------------
+
+type AvailableSectionLink = {
+  id: string;
+  type: SectionType;
+  displayName: string;
+  linkValue: string;
+};
+
 type NavItemEditorProps = {
   index: number;
-  item: { label: string; link: string };
-  availableSections: { id: string; type: string; displayName: string; linkValue: string }[];
+  item: NavItem;
+  availableSections: AvailableSectionLink[];
   isExternal: boolean;
   onLabelChange: (value: string) => void;
   onLinkChange: (value: string) => void;
