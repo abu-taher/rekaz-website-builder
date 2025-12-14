@@ -8,6 +8,7 @@ import type {
   FeatureItem,
 } from '@/lib/sections';
 import { useLayoutStore } from '@/lib/store';
+import { Button, Input, Textarea, Select, Label, Card } from '@/components/ui';
 
 type PropertyPanelProps = {
   section: SectionInstance | undefined;
@@ -35,15 +36,17 @@ export const PropertyPanel = memo(function PropertyPanel({
 
   if (!section) {
     return (
-      <div className="text-sm text-gray-600 border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
-        Select a section in the preview to edit its content.
-      </div>
+      <Card variant="dashed" padding="md" className="rounded-lg">
+        <p className="text-sm text-gray-600 text-center">
+          Select a section in the preview to edit its content.
+        </p>
+      </Card>
     );
   }
 
   const handleChange =
     (field: string) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       updateSection(section.id, { [field]: e.target.value });
     };
 
@@ -55,49 +58,46 @@ export const PropertyPanel = memo(function PropertyPanel({
           <h3 className="text-base font-bold text-[#030014]">Hero Settings</h3>
 
           <div className="space-y-2">
-            <label htmlFor="hero-title" className="text-sm font-medium text-gray-700 block">Title</label>
-            <input
+            <Label htmlFor="hero-title">Title</Label>
+            <Input
               id="hero-title"
               type="text"
               value={title}
               onChange={handleChange('title')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="hero-subtitle" className="text-sm font-medium text-gray-700 block">Subtitle</label>
-            <textarea
+            <Label htmlFor="hero-subtitle">Subtitle</Label>
+            <Textarea
               id="hero-subtitle"
               value={subtitle ?? ''}
               onChange={handleChange('subtitle')}
               rows={3}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="hero-button" className="text-sm font-medium text-gray-700 block">Button Label</label>
-            <input
+            <Label htmlFor="hero-button">Button Label</Label>
+            <Input
               id="hero-button"
               type="text"
               value={buttonLabel ?? ''}
               onChange={handleChange('buttonLabel')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="hero-image" className="text-sm font-medium text-gray-700 block">Image URL</label>
-            <input
+            <Label htmlFor="hero-image" hint="Enter a valid image URL (leave empty to hide image)">
+              Image URL
+            </Label>
+            <Input
               id="hero-image"
               type="url"
               value={imageUrl ?? ''}
               onChange={handleChange('imageUrl')}
               placeholder="https://example.com/image.jpg"
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
-            <p className="text-xs text-gray-500">Enter a valid image URL (leave empty to hide image)</p>
           </div>
         </div>
       );
@@ -154,26 +154,21 @@ export const PropertyPanel = memo(function PropertyPanel({
           <h3 className="text-base font-bold text-[#030014]">Header Settings</h3>
 
           <div className="space-y-2">
-            <label htmlFor="header-logo" className="text-sm font-medium text-gray-700 block">Logo Text</label>
-            <input
+            <Label htmlFor="header-logo">Logo Text</Label>
+            <Input
               id="header-logo"
               type="text"
               value={logoText}
               onChange={handleChange('logoText')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700">Navigation Items</label>
-              <button
-                type="button"
-                onClick={handleAddNavItem}
-                className="text-xs px-3 py-1 rounded-lg border-2 border-[#F17265] text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all"
-              >
+              <span className="text-sm font-medium text-gray-700">Navigation Items</span>
+              <Button variant="danger" size="sm" onClick={handleAddNavItem}>
                 + Add Link
-              </button>
+              </Button>
             </div>
 
             {navItems.map((item, index) => (
@@ -190,9 +185,11 @@ export const PropertyPanel = memo(function PropertyPanel({
             ))}
 
             {navItems.length === 0 && (
-              <p className="text-xs text-gray-500 text-center py-4 border-2 border-dashed border-gray-300 rounded-lg">
-                No navigation items. Click &quot;Add Link&quot; to create one.
-              </p>
+              <Card variant="dashed" padding="md" className="rounded-lg">
+                <p className="text-xs text-gray-500 text-center">
+                  No navigation items. Click &quot;Add Link&quot; to create one.
+                </p>
+              </Card>
             )}
           </div>
         </div>
@@ -231,69 +228,61 @@ export const PropertyPanel = memo(function PropertyPanel({
           <h3 className="text-base font-bold text-[#030014]">Features Settings</h3>
 
           <div className="space-y-2">
-            <label htmlFor="features-heading" className="text-sm font-medium text-gray-700 block">Heading</label>
-            <input
+            <Label htmlFor="features-heading">Heading</Label>
+            <Input
               id="features-heading"
               type="text"
               value={heading}
               onChange={handleChange('heading')}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
             />
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700">Feature Items</label>
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="text-xs px-3 py-1 rounded-lg border-2 border-[#F17265] text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all"
-              >
+              <span className="text-sm font-medium text-gray-700">Feature Items</span>
+              <Button variant="danger" size="sm" onClick={handleAddItem}>
                 + Add Item
-              </button>
+              </Button>
             </div>
 
             {items.map((item, index) => (
-              <div
-                key={index}
-                className="border-2 border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50"
-              >
+              <Card key={index} variant="muted" padding="sm" className="rounded-lg space-y-2">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-gray-500 uppercase">
                     Item {index + 1}
                   </span>
-                  <button
-                    type="button"
+                  <Button
+                    variant="danger-subtle"
+                    size="sm"
                     onClick={() => handleRemoveItem(index)}
-                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-500 hover:bg-red-50 transition-all"
                     aria-label={`Remove feature item ${index + 1}`}
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
 
-                <input
+                <Input
                   type="text"
                   value={item.title}
                   onChange={(e) => handleItemChange(index, 'title', e.target.value)}
                   placeholder="Feature title"
-                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
                 />
 
-                <textarea
+                <Textarea
                   value={item.description}
                   onChange={(e) => handleItemChange(index, 'description', e.target.value)}
                   placeholder="Feature description"
                   rows={2}
-                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
                 />
-              </div>
+              </Card>
             ))}
 
             {items.length === 0 && (
-              <p className="text-xs text-gray-500 text-center py-4 border-2 border-dashed border-gray-300 rounded-lg">
-                No feature items. Click &quot;Add Item&quot; to create one.
-              </p>
+              <Card variant="dashed" padding="md" className="rounded-lg">
+                <p className="text-xs text-gray-500 text-center">
+                  No feature items. Click &quot;Add Item&quot; to create one.
+                </p>
+              </Card>
             )}
           </div>
         </div>
@@ -307,13 +296,12 @@ export const PropertyPanel = memo(function PropertyPanel({
           <h3 className="text-base font-bold text-[#030014]">Footer Settings</h3>
 
           <div className="space-y-2">
-            <label htmlFor="footer-text" className="text-sm font-medium text-gray-700 block">Text</label>
-            <textarea
+            <Label htmlFor="footer-text">Text</Label>
+            <Textarea
               id="footer-text"
               value={text}
               onChange={handleChange('text')}
               rows={3}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none resize-none transition-all"
             />
           </div>
         </div>
@@ -359,39 +347,36 @@ function NavItemEditor({
   const handleLinkTypeChange = (type: 'section' | 'external') => {
     setLinkType(type);
     if (type === 'section') {
-      // Reset to first available section or empty
       onLinkChange(availableSections[0]?.linkValue || '#');
     } else {
-      // Reset to empty for external URL
       onLinkChange('https://');
     }
   };
 
   return (
-    <div className="border-2 border-gray-200 rounded-lg p-3 space-y-3 bg-gray-50">
+    <Card variant="muted" padding="sm" className="rounded-lg space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-gray-500 uppercase">
           Link {index + 1}
         </span>
-        <button
-          type="button"
+        <Button
+          variant="danger-subtle"
+          size="sm"
           onClick={onRemove}
-          className="text-xs px-3 py-1.5 rounded border border-red-300 text-red-500 hover:bg-red-50 active:bg-red-100 transition-all min-h-[32px]"
           aria-label={`Remove nav item ${index + 1}`}
         >
           Remove
-        </button>
+        </Button>
       </div>
 
       {/* Label Input */}
       <div className="space-y-1">
         <label className="text-xs text-gray-500">Label</label>
-        <input
+        <Input
           type="text"
           value={item.label}
           onChange={(e) => onLabelChange(e.target.value)}
           placeholder="Link label"
-          className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all"
         />
       </div>
 
@@ -399,28 +384,24 @@ function NavItemEditor({
       <div className="space-y-2">
         <label className="text-xs text-gray-500">Link To</label>
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
+            variant={linkType === 'section' ? 'danger' : 'outline'}
+            size="md"
             onClick={() => handleLinkTypeChange('section')}
-            className={`flex-1 text-xs sm:text-sm py-3 px-3 rounded-lg border-2 font-medium transition-all min-h-[44px] ${
-              linkType === 'section'
-                ? 'border-[#F17265] bg-[#FFF5F4] text-[#F17265]'
-                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400 active:bg-gray-50'
-            }`}
+            className="flex-1 min-h-[44px]"
           >
             📑 Section
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={linkType === 'external' ? 'danger' : 'outline'}
+            size="md"
             onClick={() => handleLinkTypeChange('external')}
-            className={`flex-1 text-xs sm:text-sm py-3 px-3 rounded-lg border-2 font-medium transition-all min-h-[44px] ${
-              linkType === 'external'
-                ? 'border-[#F17265] bg-[#FFF5F4] text-[#F17265]'
-                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400 active:bg-gray-50'
-            }`}
+            className="flex-1 min-h-[44px]"
           >
             🔗 External
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -429,10 +410,9 @@ function NavItemEditor({
         <div className="space-y-1">
           <label className="text-xs text-gray-500">Select Section</label>
           {availableSections.length > 0 ? (
-            <select
+            <Select
               value={item.link}
               onChange={(e) => onLinkChange(e.target.value)}
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2.5 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all cursor-pointer min-h-[44px]"
             >
               <option value="#">-- Select a section --</option>
               {availableSections.map((sec) => (
@@ -440,25 +420,27 @@ function NavItemEditor({
                   {sec.displayName}
                 </option>
               ))}
-            </select>
+            </Select>
           ) : (
-            <p className="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
-              No sections available. Add Hero, Features, or Footer sections first.
-            </p>
+            <Card variant="muted" padding="sm" className="rounded-lg border-amber-200 bg-amber-50">
+              <p className="text-xs text-amber-600">
+                No sections available. Add Hero, Features, or Footer sections first.
+              </p>
+            </Card>
           )}
         </div>
       ) : (
         <div className="space-y-1">
           <label className="text-xs text-gray-500">External URL</label>
-          <input
+          <Input
             type="url"
             value={item.link}
             onChange={(e) => onLinkChange(e.target.value)}
             placeholder="https://example.com"
-            className="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2.5 text-sm text-[#030014] focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 outline-none transition-all min-h-[44px]"
+            className="min-h-[44px]"
           />
         </div>
       )}
-    </div>
+    </Card>
   );
 }

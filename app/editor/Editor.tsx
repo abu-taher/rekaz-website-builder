@@ -11,6 +11,7 @@ import {
   downloadAsJson,
   parseImportData,
 } from '@/lib/storage';
+import { Button, Card, EmptyState } from '@/components/ui';
 import { PropertyPanel } from './PropertyPanel';
 import {
   DndContext,
@@ -162,45 +163,46 @@ export function Editor() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="md"
             onClick={handleLivePreview}
             aria-label="Open live preview in new tab"
-            className="text-sm px-4 py-2 rounded-lg bg-[#F17265] text-white font-medium hover:bg-[#E25C4F] transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20 shadow-md hover:shadow-lg flex items-center gap-2"
+            className="gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
             Live Preview
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="md"
             onClick={handleExport}
             aria-label="Export layout as JSON"
-            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Export JSON
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="md"
             onClick={handleImportClick}
             aria-label="Import layout from JSON"
-            className="text-sm px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-[#030014] font-medium hover:border-[#F17265] hover:text-[#F17265] hover:bg-[#FFF5F4] transition-all focus:border-[#F17265] focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Import JSON
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant="danger"
+            size="md"
             onClick={handleClear}
             aria-label="Clear all sections"
-            className="text-sm px-4 py-2 rounded-lg border-2 border-[#F17265] bg-white text-[#F17265] font-medium hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
           >
             Clear
-          </button>
+          </Button>
 
           {/* hidden file input for import */}
           <input
@@ -250,10 +252,13 @@ export function Editor() {
           <h2 className="text-xl font-bold mb-4 text-[#030014]">Preview</h2>
 
           {sections.length === 0 ? (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-base text-gray-600 flex flex-col items-center justify-center min-h-[300px] bg-gray-50 animate-scale-in">
-              <span className="text-4xl mb-3">📦</span>
-              <span>No sections yet. Add one from the library.</span>
-            </div>
+            <Card variant="dashed" padding="lg" className="min-h-[300px] animate-scale-in">
+              <EmptyState
+                icon="📦"
+                title="No sections yet"
+                description="Add one from the library on the left to get started."
+              />
+            </Card>
           ) : (
             <DndContext
               sensors={sensors}

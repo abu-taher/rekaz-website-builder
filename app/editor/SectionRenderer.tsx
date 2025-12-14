@@ -2,6 +2,7 @@
 
 import React, { memo } from 'react';
 import type { SectionInstance, NavItem, FeatureItem } from '@/lib/sections';
+import { Button, Card } from '@/components/ui';
 
 type SectionRendererProps = {
   section: SectionInstance;
@@ -40,9 +41,9 @@ export const SectionRenderer = memo(function SectionRenderer({
               </p>
             )}
             {buttonLabel && (
-              <button className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#F17265] text-white text-sm font-semibold hover:bg-[#E25C4F] transition-all shadow-md hover:shadow-lg focus:ring-2 focus:ring-[#F17265] focus:ring-offset-2">
+              <Button variant="primary" size="md" shape="pill">
                 {buttonLabel}
-              </button>
+              </Button>
             )}
           </div>
         </section>
@@ -79,9 +80,11 @@ export const SectionRenderer = memo(function SectionRenderer({
           </h3>
           <div className="grid gap-4 md:grid-cols-3">
             {items.map((item: FeatureItem, idx: number) => (
-              <div
+              <Card
                 key={idx}
-                className="border-2 border-gray-200 rounded-xl p-5 bg-white hover:border-[#F17265] hover:shadow-md transition-all"
+                variant="default"
+                padding="md"
+                className="hover:border-[#F17265] hover:shadow-md"
               >
                 <div className="font-bold text-lg mb-2 text-[#030014]">
                   {item.title}
@@ -89,7 +92,7 @@ export const SectionRenderer = memo(function SectionRenderer({
                 <p className="text-sm md:text-base text-gray-600">
                   {item.description}
                 </p>
-              </div>
+              </Card>
             ))}
           </div>
         </section>

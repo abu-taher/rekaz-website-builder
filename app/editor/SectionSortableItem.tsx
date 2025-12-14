@@ -6,6 +6,7 @@ import { CSS } from '@dnd-kit/utilities';
 import type { SectionInstance } from '@/lib/sections';
 import { SectionRenderer } from './SectionRenderer';
 import { useLayoutStore } from '@/lib/store';
+import { Button, Badge } from '@/components/ui';
 
 type Props = {
   section: SectionInstance;
@@ -87,23 +88,23 @@ export const SectionSortableItem = memo(function SectionSortableItem({
           </span>
 
           {isSelected && (
-            <span className="hidden sm:inline-flex text-xs px-2 py-0.5 rounded-full bg-[#FFF5F4] text-[#F17265] border border-[#F17265] font-medium">
+            <Badge variant="primary" className="hidden sm:inline-flex">
               Selected
-            </span>
+            </Badge>
           )}
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="danger"
+          size="sm"
           onClick={(e) => {
             e.stopPropagation();
             removeSection(section.id);
           }}
           aria-label="Delete section"
-          className="inline-flex items-center justify-center rounded-lg border-2 border-[#F17265] bg-white px-3 py-1.5 text-xs font-medium text-[#F17265] hover:bg-[#F17265] hover:text-white transition-all focus:ring-2 focus:ring-[#F17265] focus:ring-opacity-20"
         >
           Delete
-        </button>
+        </Button>
       </div>
 
       <SectionRenderer section={section} />
