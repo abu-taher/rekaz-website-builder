@@ -34,6 +34,126 @@ import { SectionRenderer } from './SectionRenderer';
 
 type MobileTab = 'library' | 'preview';
 
+// -----------------------------------------------------------------------------
+// ConfirmDialog Component
+// -----------------------------------------------------------------------------
+
+type ConfirmDialogProps = {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
+
+function ConfirmDialog({
+  isOpen,
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  onConfirm,
+  onCancel,
+}: ConfirmDialogProps) {
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onCancel();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onCancel]);
+
+  // Prevent body scroll when dialog is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-dialog-title"
+    >
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
+      
+      {/* Dialog */}
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in border-2 border-gray-200">
+        {/* Icon */}
+        <div className="flex justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-[#FFF5F4] flex items-center justify-center">
+            <svg 
+              className="w-8 h-8 text-[#F17265]" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Title */}
+        <h2 
+          id="confirm-dialog-title"
+          className="text-xl font-bold text-center text-[#030014] mb-2"
+        >
+          {title}
+        </h2>
+
+        {/* Message */}
+        <p className="text-gray-600 text-center mb-6">
+          {message}
+        </p>
+
+        {/* Actions */}
+        <div className="flex flex-col-reverse sm:flex-row gap-3">
+          <Button
+            variant="outline"
+            size="lg"
+            className="flex-1"
+            onClick={onCancel}
+          >
+            {cancelLabel}
+          </Button>
+          <Button
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            onClick={onConfirm}
+          >
+            {confirmLabel}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Editor() {
   const sections = useLayoutStore((state) => state.sections);
   const selectedSectionId = useLayoutStore((state) => state.selectedSectionId);
@@ -46,6 +166,7 @@ export function Editor() {
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<MobileTab>('library');
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -167,8 +288,18 @@ export function Editor() {
   };
 
   const handleClear = () => {
-    reset();
+    if (sections.length === 0) return;
+    setShowClearConfirm(true);
   };
+
+  const handleConfirmClear = () => {
+    reset();
+    setShowClearConfirm(false);
+  };
+
+  const handleCancelClear = useCallback(() => {
+    setShowClearConfirm(false);
+  }, []);
 
   const handleLivePreview = () => {
     window.open('/preview', '_blank');
@@ -419,6 +550,17 @@ export function Editor() {
           )}
         </main>
       </div>
+
+      {/* Clear Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showClearConfirm}
+        title="Clear All Sections?"
+        message={`You're about to delete ${sections.length} section${sections.length > 1 ? 's' : ''}. This action cannot be undone.`}
+        confirmLabel="Yes, Clear All"
+        cancelLabel="Keep Sections"
+        onConfirm={handleConfirmClear}
+        onCancel={handleCancelClear}
+      />
     </div>
   );
 }
