@@ -167,6 +167,7 @@ export function Editor() {
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<MobileTab>('library');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [sectionCountToDelete, setSectionCountToDelete] = useState(0);
 
   // Configure sensors for both mouse and touch support
   const mouseSensor = useSensor(MouseSensor, {
@@ -289,16 +290,19 @@ export function Editor() {
 
   const handleClear = () => {
     if (sections.length === 0) return;
+    setSectionCountToDelete(sections.length);
     setShowClearConfirm(true);
   };
 
   const handleConfirmClear = () => {
     reset();
     setShowClearConfirm(false);
+    setSectionCountToDelete(0);
   };
 
   const handleCancelClear = useCallback(() => {
     setShowClearConfirm(false);
+    setSectionCountToDelete(0);
   }, []);
 
   const handleLivePreview = () => {
@@ -555,7 +559,7 @@ export function Editor() {
       <ConfirmDialog
         isOpen={showClearConfirm}
         title="Clear All Sections?"
-        message={`You're about to delete ${sections.length} section${sections.length > 1 ? 's' : ''}. This action cannot be undone.`}
+        message={`You're about to delete ${sectionCountToDelete} section${sectionCountToDelete > 1 ? 's' : ''}. This action cannot be undone.`}
         confirmLabel="Yes, Clear All"
         cancelLabel="Keep Sections"
         onConfirm={handleConfirmClear}
